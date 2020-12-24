@@ -1,0 +1,13 @@
+{
+    "x": 0,
+    "y": 0,
+    "height": 100,
+    "width": 500,
+    "wins": {
+		"webstorm":{"app":true, "cmd":"D:\\ProgsReady\\IntellijIdeaUI\\bin\\idea64.exe"},
+        "watch": { "no_run": false, "cmd":"cls & npm run watch:src"}
+    },
+    "wins_DISABLED": {
+
+    }
+}

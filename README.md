@@ -95,6 +95,14 @@ If you didn't liked **yproject_policy** uninstallation process is quite simple.
 
 # TODOs and notes
 
+* Реализовывать в папке **src**, она компилируется в папку **lib** при помощи запуска в отдельной консоли **npm run watch:src**
+* В качестве пакетов использовать
+  * Dependencies от пакета **npm-check**
+  * Наиболее вероятно потребуются:
+    * readDirRecursive - см в папке
+    * https://www.npmjs.com/package/inquirer
+    * https://www.npmjs.com/package/globby
+    * https://www.npmjs.com/package/chalk
 * FileMap - relativePath, content
 * readPolicy(projectDir) -> PolicyData
   * Считать  `yproject_policy_definition.cjs`  в переменную
