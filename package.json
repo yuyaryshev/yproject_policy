@@ -1,0 +1,43 @@
+{
+  "name": "yproject_policy",
+  "version": "0.0.1",
+  "description": "Local package manager. A tool to manage your multi-repo.",
+  "main": "./index.js",
+  "keywords": [
+    "pnpm",
+    "multi-repo"
+  ],
+  "bin": {
+    "yproject_policy": "./bin/index.js"
+  },
+  "files": [
+    "/bin",
+    "/lib",
+    "index.js",
+    "index.cjs",
+    "index.mjs",
+    "README.md",
+    "LICENSE",
+    "Unlicense",
+    "Unlicense.txt"
+  ],
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuyaryshev/yproject_policy.git"
+  },
+  "author": "Yuri Yaryshev",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/yuyaryshev/yproject_policy/issues"
+  },
+  "homepage": "https://github.com/yuyaryshev/yproject_policy#readme",
+  "devDependencies": {
+    "prettier": "^2.0.5"
+  },
+  "dependencies": {
+  }
+}
