@@ -1,7 +1,6 @@
-import fs, { Dirent } from "fs";
+import fs from "fs";
 import { join as joinPath } from "path";
-
-export type ReadDirCallback = (path: string, dirEntry: Dirent) => true | false | undefined | void;
+import {ReadDirCallback, ReadDirCallback2} from "../types";
 
 export const readDirRecursive = (path: string, v_callback: ReadDirCallback) => {
     let files = fs.readdirSync(path, { withFileTypes: true });
@@ -10,8 +9,6 @@ export const readDirRecursive = (path: string, v_callback: ReadDirCallback) => {
         if (r !== false && file.isDirectory()) readDirRecursive(joinPath(path, file.name), v_callback);
     }
 };
-
-export type ReadDirCallback2 = (path: string, filename: Dirent, parentResult?: any | undefined) => any | undefined | void;
 
 export const readDirRecursive2 = (path: string, v_callback: ReadDirCallback2, parentResult?: any | undefined) => {
     let files = fs.readdirSync(path, { withFileTypes: true });
