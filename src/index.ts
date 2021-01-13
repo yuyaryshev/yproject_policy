@@ -9,7 +9,7 @@ import { readPolicy } from "./helpers";
 import { readProject } from "./helpers";
 
 
-const currentPath = pathJoin(process.cwd(), "/../yproject_policy_projects/test_project");
+const currentPath = pathJoin(process.cwd(), "../../../yproject_policy_projects/test_project");
 // const writePath = pathJoin(process.cwd(), "/../yproject_policy_projects/");
 //
 const result = readProject(currentPath);
