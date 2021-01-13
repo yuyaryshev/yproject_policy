@@ -5,6 +5,7 @@ type writeFileSyncWithDir = (path: string, content: string, encoding?: BufferEnc
 
 export const writeFileSyncWithDir: writeFileSyncWithDir = (path, content, encoding = "utf-8") => {
     try {
+        console.log("TRY TO WRITE FILE: ", path);
         const dir = dirname(path);
         if (!fs.existsSync(dir)) {
             console.log("dir not exists", dir);
