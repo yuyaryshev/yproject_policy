@@ -35,14 +35,10 @@ export const readProject: readProjectType = (projectDir) => {
         try {
             const relPath = relative(projectDir, join(path, dirEntry.name));
             if (dirEntry.isDirectory()) {
-                let check = !excludeDirs.find(pattern => (dirEntry.name.match(pattern)));
-                console.log("FIND DIRECTORY: ", relPath, check);
-                return check;
+                return !excludeDirs.find(pattern => (dirEntry.name.match(pattern)));
             } else {
                 if (dirEntry.name !== PROJECT_POLICY_CONFIG_FILENAME && !excludeFiles.find(pattern => (dirEntry.name.match(pattern)))) {
-                    console.log("FIND OTHER FILE: ", relPath);
                     projectData.files.set(relPath, fs.readFileSync(join(path, dirEntry.name)).toString());
-
                 }
             }
         } catch (error) {
