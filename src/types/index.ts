@@ -10,7 +10,7 @@ export type PolicyOptions = {
 };
 
 export type PolicyFileGenerator = {
-    generate: (packageJson: object, policyOptions: object) => string;
+    generate: (packageJson: object, policyOptions: PolicyOptions) => string;
 };
 
 export type PolicyDefinition = {
