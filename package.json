@@ -82,6 +82,7 @@
   },
   "dependencies": {
     "execa": "^5.0.0",
+    "inquirer": "^7.3.3",
     "my_wins": "^1.0.14"
   }
 }

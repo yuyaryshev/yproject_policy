@@ -19,20 +19,20 @@ export type PolicyDefinition = {
 };
 
 export type PolicyData = {
-    policy: PolicyDefinition | undefined;
+    policy: PolicyDefinition;
     files: FileMap;
     genFiles: Map<string, PolicyFileGenerator>;
 };
 
 export type ExcludeFromPolicy = {
-    directories: Array<string>,
-    files: Array<string>,
+    directories: Array<string>;
+    files: Array<string>;
 };
 
 export type ProjectPolicyConfig = {
     policy: string;
-    options?: object;
-}
+    options?: PolicyOptions;
+};
 
 export type ProjectData = {
     policy: ProjectPolicyConfig;
