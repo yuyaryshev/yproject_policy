@@ -20,13 +20,15 @@ export const readProject: readProjectType = (projectDir) => {
 
     const readProjectDefinitionCallback: ReadDirCallback = (path, dirEntry) => {
         try {
-            if (dirEntry.isFile() && dirEntry.name === PROJECT_POLICY_CONFIG_FILENAME) {
-                console.log("FIND PROJECT POLICY CONFIG: ", relative(projectDir, join(path, dirEntry.name)));
-                projectData.policyConf = require(join(path, dirEntry.name));
-            }
-            if (dirEntry.isFile() && dirEntry.name === PACKAGE_JSON) {
-                console.log("FIND PROJECT PACKAGE JSON: ", relative(projectDir, join(path, dirEntry.name)));
-                projectData.packageJson = require(join(path, dirEntry.name))
+            if (dirEntry.isFile()) {
+                if (dirEntry.name === PROJECT_POLICY_CONFIG_FILENAME) {
+                    console.log("FIND PROJECT POLICY CONFIG: ", relative(projectDir, join(path, dirEntry.name)));
+                    projectData.policyConf = require(join(path, dirEntry.name));
+                }
+                if (dirEntry.name === PACKAGE_JSON) {
+                    console.log("FIND PROJECT PACKAGE JSON: ", relative(projectDir, join(path, dirEntry.name)));
+                    projectData.packageJson = require(join(path, dirEntry.name))
+                }
             }
         } catch (error) {
             console.error(error.message);
@@ -41,7 +43,9 @@ export const readProject: readProjectType = (projectDir) => {
             if (dirEntry.isDirectory()) {
                 return !excludeDirs.find(pattern => (dirEntry.name.match(pattern)));
             } else {
-                if (dirEntry.name !== PROJECT_POLICY_CONFIG_FILENAME && !excludeFiles.find(pattern => (dirEntry.name.match(pattern)))) {
+                if (dirEntry.name !== PROJECT_POLICY_CONFIG_FILENAME &&
+                    dirEntry.name !== PACKAGE_JSON &&
+                    !excludeFiles.find(pattern => (dirEntry.name.match(pattern)))) {
                     projectData.files.set(relPath, fs.readFileSync(join(path, dirEntry.name)).toString());
                 }
             }

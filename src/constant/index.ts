@@ -28,8 +28,7 @@ export const EXCLUDE_FROM_PROJECT_REGEX: ExcludeFromProject = {
         ".eslintcache",
         "package.json",
         ".gitignore",
-        "YPOLICY_EXPECTS_*",
-        "yproject_policy.cjs",
+        "^YPOLICY_EXPECTS_.+",
         "^[\\w,\\s-]+-lock.json$",
     ],
 };

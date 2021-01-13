@@ -15,8 +15,6 @@ const currentPath = pathJoin(process.cwd(), "/../yproject_policy_projects/test_p
 const result = readProject(currentPath);
 //const result = readPolicy(currentPath);
 
-console.log(POLICY_DEFINITION_FILENAME);
-
 console.log("############################################");
 console.log("############################################");
 console.log("############################################");
