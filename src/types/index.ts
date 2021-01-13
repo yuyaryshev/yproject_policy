@@ -29,15 +29,20 @@ export type ExcludeFromPolicy = {
     files: Array<string>,
 };
 
+export type ExcludeFromProject = {
+    directories: Array<string>,
+    files: Array<string>,
+};
+
 export type ProjectPolicyConfig = {
     policy: string;
     options?: object;
 }
 
 export type ProjectData = {
-    policy: ProjectPolicyConfig;
+    policyConf: ProjectPolicyConfig | undefined;
     files: FileMap;
-    packageJson: object;
+    packageJson: object | undefined;
     location: string;
 };
 

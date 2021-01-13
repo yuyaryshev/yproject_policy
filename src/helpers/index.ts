@@ -10,3 +10,7 @@ export {
 export {
     readPolicy,
 } from "./readPolicy";
+
+export {
+    readProject,
+} from "./readProject";

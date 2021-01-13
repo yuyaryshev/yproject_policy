@@ -6,11 +6,14 @@ import { POLICY_DEFINITION_FILENAME } from "./constant";
 // import { genFilesRegex } from "./helpers/regex";
 // import fs from "fs";
 import { readPolicy } from "./helpers";
+import { readProject } from "./helpers";
 
-const currentPath = pathJoin(process.cwd(), "../../../yproject_policy_projects/git_policy");
-// const writePath = pathJoin(process.cwd(), "../../../yproject_policy_projects/");
+
+const currentPath = pathJoin(process.cwd(), "/../yproject_policy_projects/test_project");
+// const writePath = pathJoin(process.cwd(), "/../yproject_policy_projects/");
 //
-const result = readPolicy(currentPath);
+const result = readProject(currentPath);
+//const result = readPolicy(currentPath);
 
 console.log(POLICY_DEFINITION_FILENAME);
 
