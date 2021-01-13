@@ -6,7 +6,6 @@ export type ReadDirCallback2 = (path: string, filename: Dirent, parentResult?: a
 
 export type PolicyOptions = {
     ignored?: Array<string>;
-    exclude?: Array<string>;
     [x: string]: any;
 };
 
@@ -20,11 +19,30 @@ export type PolicyDefinition = {
 };
 
 export type PolicyData = {
-    policy: PolicyDefinition | undefined;
+    policy: PolicyDefinition;
     files: FileMap;
     genFiles: Map<string, PolicyFileGenerator>;
 };
 
+export type ExcludeFromPolicy = {
+    directories: Array<string>;
+    files: Array<string>;
+};
+
+export type ProjectPolicyConfig = {
+    policy: string;
+    options?: PolicyOptions;
+};
+
+export type ProjectData = {
+    policy: ProjectPolicyConfig;
+    files: FileMap;
+    packageJson: object;
+    location: string;
+};
+
 export type PolicyCollection = Map<string, PolicyData>;
+
+export type ProjectCollection = Map<string, ProjectData>;
 
 export type FileMap = Map<string, string>;
