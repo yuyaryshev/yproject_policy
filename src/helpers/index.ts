@@ -1,8 +1,12 @@
 export {
     readDirRecursive,
     readDirRecursive2,
-} from './readDirRecursive';
+} from "./readDirRecursive";
 
 export {
     writeFileSyncIfChanged,
-} from './writeFileSyncIfChanged';
+} from "./writeFileSyncIfChanged";
+
+export {
+    readPolicy,
+} from "./readPolicy";
