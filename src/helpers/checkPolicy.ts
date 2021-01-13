@@ -7,7 +7,7 @@ type checkPolicy = (policyData: PolicyData, projectData: ProjectData) => void;
 
 export const checkPolicy: checkPolicy = (policyData, projectData) => {
     const { location: projectDir, files: projectFiles } = projectData;
-    const policyFiles: FileMap = new Map<string, string>([...genPolicyFiles(policyData, projectData), ...policyData.files]);
+    const policyFiles: FileMap = new Map([...genPolicyFiles(policyData, projectData), ...policyData.files]);
 
     for (let [relPath, content] of policyFiles) {
         try {
