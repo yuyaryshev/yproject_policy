@@ -1,16 +1,12 @@
 import { join as pathJoin } from "path";
-import { POLICY_DEFINITION_FILENAME } from "./constant";
-import { readPolicy, readProject, userInteraction, checkPolicy, readPolicy } from "./helpers";
-
+import { readPolicy, readProject, userInteraction, checkPolicy } from "./helpers";
 
 const policyPath = pathJoin(process.cwd(), "../../../yproject_policy_projects/git_policy");
 const projectPath = pathJoin(process.cwd(), "../../../yproject_policy_projects/test_project");
 
-
-userInteraction()
+userInteraction();
 const policy = readPolicy(policyPath);
 const project = readProject(projectPath);
-
 
 console.log("############################################");
 console.log("############################################");

@@ -1,6 +1,6 @@
 import fs from "fs";
 import { join as joinPath } from "path";
-import {ReadDirCallback, ReadDirCallback2} from "../types";
+import { ReadDirCallback, ReadDirCallback2 } from "../types";
 
 export const readDirRecursive = (path: string, v_callback: ReadDirCallback) => {
     let files = fs.readdirSync(path, { withFileTypes: true });

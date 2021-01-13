@@ -30,8 +30,8 @@ export type ExcludeFromPolicy = {
 };
 
 export type ExcludeFromProject = {
-    directories: Array<string>,
-    files: Array<string>,
+    directories: Array<string>;
+    files: Array<string>;
 };
 
 export type ProjectPolicyConfig = {
@@ -54,6 +54,6 @@ export type FileMap = Map<string, string>;
 
 export type User = any;
 
-export type Match = () => Promise<{match: string}>;
+export type Match = () => Promise<{ match: string }>;
 
-export type Additional = () => Promise<{additional: string}>;
+export type Additional = () => Promise<{ additional: string }>;

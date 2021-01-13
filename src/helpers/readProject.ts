@@ -1,10 +1,9 @@
 import { relative, join } from "path";
 import fs from "fs";
-import {ProjectData, PolicyFileGenerator, ReadDirCallback, ProjectPolicyConfig, FileMap} from "src/types";
+import { ProjectData, PolicyFileGenerator, ReadDirCallback, ProjectPolicyConfig, FileMap } from "src/types";
 import { readDirRecursive } from "./readDirRecursive";
 import { genFilesRegex } from "./regex";
 import { PROJECT_POLICY_CONFIG_FILENAME, EXCLUDE_FROM_PROJECT_REGEX, PACKAGE_JSON } from "../constant";
-
 
 const { directories: excludeDirs, files: excludeFiles } = EXCLUDE_FROM_PROJECT_REGEX;
 
@@ -27,7 +26,7 @@ export const readProject: readProjectType = (projectDir) => {
                 }
                 if (dirEntry.name === PACKAGE_JSON) {
                     console.log("FIND PROJECT PACKAGE JSON: ", relative(projectDir, join(path, dirEntry.name)));
-                    projectData.packageJson = require(join(path, dirEntry.name))
+                    projectData.packageJson = require(join(path, dirEntry.name));
                 }
             }
         } catch (error) {
@@ -41,11 +40,13 @@ export const readProject: readProjectType = (projectDir) => {
         try {
             const relPath = relative(projectDir, join(path, dirEntry.name));
             if (dirEntry.isDirectory()) {
-                return !excludeDirs.find(pattern => (dirEntry.name.match(pattern)));
+                return !excludeDirs.find((pattern) => dirEntry.name.match(pattern));
             } else {
-                if (dirEntry.name !== PROJECT_POLICY_CONFIG_FILENAME &&
+                if (
+                    dirEntry.name !== PROJECT_POLICY_CONFIG_FILENAME &&
                     dirEntry.name !== PACKAGE_JSON &&
-                    !excludeFiles.find(pattern => (dirEntry.name.match(pattern)))) {
+                    !excludeFiles.find((pattern) => dirEntry.name.match(pattern))
+                ) {
                     projectData.files.set(relPath, fs.readFileSync(join(path, dirEntry.name)).toString());
                 }
             }
