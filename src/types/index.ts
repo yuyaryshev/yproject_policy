@@ -51,3 +51,9 @@ export type PolicyCollection = Map<string, PolicyData>;
 export type ProjectCollection = Map<string, ProjectData>;
 
 export type FileMap = Map<string, string>;
+
+export type User = any;
+
+export type Match = () => Promise<{match: string}>;
+
+export type Additional = () => Promise<{additional: string}>;

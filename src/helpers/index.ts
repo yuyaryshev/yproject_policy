@@ -13,3 +13,5 @@ export { checkPolicy } from "./checkPolicy";
 export { writeFileSyncWithDir } from "./writeFileSyncWithDir";
 
 export { readProject } from "./readProject";
+
+export { userInteraction } from "./userInteraction";
