@@ -82,7 +82,9 @@
   },
   "dependencies": {
     "execa": "^5.0.0",
+    "chalk": "^4.1.0",
+    "globby": "^11.0.2",
     "inquirer": "^7.3.3",
-    "my_wins": "^1.0.14"
+    "my_wins": "^1.0.14",
   }
 }
