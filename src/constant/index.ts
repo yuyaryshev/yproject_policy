@@ -2,6 +2,7 @@ import {ExcludeFromPolicy, ExcludeFromProject} from "src/types";
 
 export const POLICY_DEFINITION_FILENAME: string = "project_policy_definition.cjs";
 export const PROJECT_POLICY_CONFIG_FILENAME: string = "yproject_policy.cjs";
+export const PACKAGE_JSON: string = "package.json";
 export const EXCLUDE_FROM_POLICY_REGEX: ExcludeFromPolicy = {
     directories: [
         ".git",

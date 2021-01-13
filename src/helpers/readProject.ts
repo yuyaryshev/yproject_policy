@@ -3,7 +3,7 @@ import fs from "fs";
 import {ProjectData, PolicyFileGenerator, ReadDirCallback, ProjectPolicyConfig, FileMap} from "src/types";
 import { readDirRecursive } from "./readDirRecursive";
 import { genFilesRegex } from "./regex";
-import { PROJECT_POLICY_CONFIG_FILENAME, EXCLUDE_FROM_PROJECT_REGEX } from "../constant";
+import { PROJECT_POLICY_CONFIG_FILENAME, EXCLUDE_FROM_PROJECT_REGEX, PACKAGE_JSON } from "../constant";
 
 
 const { directories: excludeDirs, files: excludeFiles } = EXCLUDE_FROM_PROJECT_REGEX;
@@ -23,6 +23,10 @@ export const readProject: readProjectType = (projectDir) => {
             if (dirEntry.isFile() && dirEntry.name === PROJECT_POLICY_CONFIG_FILENAME) {
                 console.log("FIND PROJECT POLICY CONFIG: ", relative(projectDir, join(path, dirEntry.name)));
                 projectData.policyConf = require(join(path, dirEntry.name));
+            }
+            if (dirEntry.isFile() && dirEntry.name === PACKAGE_JSON) {
+                console.log("FIND PROJECT PACKAGE JSON: ", relative(projectDir, join(path, dirEntry.name)));
+                projectData.packageJson = require(join(path, dirEntry.name))
             }
         } catch (error) {
             console.error(error.message);
