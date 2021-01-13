@@ -5,8 +5,7 @@ import { POLICY_DEFINITION_FILENAME } from "./constant";
 // import { POLICY_DEFINITION_FILENAME } from "./constant";
 // import { genFilesRegex } from "./helpers/regex";
 // import fs from "fs";
-import { readPolicy } from "./helpers";
-import { readProject } from "./helpers";
+import { readPolicy, readProject, userInteraction } from "./helpers";
 
 
 const currentPath = pathJoin(process.cwd(), "/../yproject_policy_projects/test_project");
@@ -14,6 +13,7 @@ const currentPath = pathJoin(process.cwd(), "/../yproject_policy_projects/test_p
 //
 const result = readProject(currentPath);
 //const result = readPolicy(currentPath);
+userInteraction()
 
 console.log("############################################");
 console.log("############################################");
@@ -26,7 +26,7 @@ console.log("############################################");
 //     console.log(stdout);
 // })();
 
-console.log(result);
+//console.log(result);
 
 // for (let [path, content] of result.files.entries()) {
 //     let dir = dirname(pathJoin(writePath, path));
