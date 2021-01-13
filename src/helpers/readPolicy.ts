@@ -33,15 +33,14 @@ export const readPolicy: readPolicyType = (projectDir) => {
                 let check = !excludeDirs.find((pattern) => dirEntry.name.match(pattern));
                 console.log("FIND DIRECTORY: ", relPath, check);
                 return check;
-            } else {
-                if (dirEntry.name !== POLICY_DEFINITION_FILENAME && !excludeFiles.find((pattern) => dirEntry.name.match(pattern))) {
-                    if (dirEntry.name.match(genFilesRegex)) {
-                        console.log("FIND GEN FILE: ", relPath);
-                        genFiles.set(relPath, require(join(path, dirEntry.name)));
-                    } else {
-                        console.log("FIND OTHER FILE: ", relPath);
-                        files.set(relPath, fs.readFileSync(join(path, dirEntry.name)).toString());
-                    }
+            }
+            if (dirEntry.name !== POLICY_DEFINITION_FILENAME && !excludeFiles.find((pattern) => dirEntry.name.match(`${pattern}$`))) {
+                if (dirEntry.name.match(genFilesRegex)) {
+                    console.log("FIND GEN FILE: ", relPath);
+                    genFiles.set(relPath.replace(genFilesRegex, ""), require(join(path, dirEntry.name)));
+                } else {
+                    console.log("FIND OTHER FILE: ", relPath);
+                    files.set(relPath, fs.readFileSync(join(path, dirEntry.name)).toString());
                 }
             }
         } catch (error) {
