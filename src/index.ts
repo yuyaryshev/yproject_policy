@@ -30,21 +30,21 @@ module.exports.run = async () => {
         let missingProject = getMissingPolicies(scanResult);
         if (missingProject.size > 0 && localModulesPath) {
             console.log("SOME POLICE NOT FOUND");
-            const answer: string = (await policyNotFound()).policyNotFound;
-            switch (answer) {
-                case "try":
-                    if (!isCheckLocalModule(currentPath, localModulesPath)) {
+            if (!isCheckLocalModule(currentPath, localModulesPath) && !scanLocalModules) {
+                const answer: string = (await policyNotFound()).policyNotFound;
+                switch (answer) {
+                    case "try":
                         await scanPath(localModulesPath, scanResult, true);
                         missingProject = getMissingPolicies(scanResult);
                         if (missingProject.size > 0) removeProjectFromScan(scanResult, missingProject);
-                    } else {
+                        break;
+                    case "skip":
                         removeProjectFromScan(scanResult, missingProject);
-                    }
-                    break;
-                case "skip":
-                    removeProjectFromScan(scanResult, missingProject);
-                    break;
-                default:
+                        break;
+                    default:
+                }
+            } else {
+                removeProjectFromScan(scanResult, missingProject);
             }
         }
 
@@ -74,6 +74,8 @@ module.exports.run = async () => {
         console.error(error.message);
         process.exit(1);
     }
+    console.log("#######################################################");
+    console.log("FINISH");
 };
 
 type getMissingPolicies = (packagesCollection: PackagesCollection) => Map<string, string>;
@@ -90,11 +92,11 @@ const getMissingPolicies: getMissingPolicies = (packagesCollection) => {
 type removeProjectFromScan = (packagesCollection: PackagesCollection, removeCollection: Map<string, string>) => void;
 
 const removeProjectFromScan: removeProjectFromScan = (packagesCollection, removeCollection) => {
-    for (let projectPath of removeCollection.keys()) {
+    for (let [path, policy] of removeCollection.entries()) {
         console.log("#######################################################");
-        console.log(chalk.red("Remove project from scan: ", projectPath));
+        console.log(chalk.red("Remove project from scan: ", path, " Policy: ", policy));
         console.log("#######################################################");
-        packagesCollection.projects.delete(projectPath);
+        packagesCollection.projects.delete(path);
         showResult(packagesCollection);
     }
 };
