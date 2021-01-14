@@ -1,7 +1,5 @@
-import { User, Match, Additional, PolicyNotFound } from "src/types";
+import { Match, Additional, PolicyNotFound } from "src/types";
 import inquirer from "inquirer";
-
-type userInteraction = () => User;
 
 export const match: Match = async () => {
     return inquirer.prompt([
