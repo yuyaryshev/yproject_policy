@@ -1,6 +1,6 @@
 import execa from "execa";
 import { join } from "path";
-import { checkPolicy, isPolicy, isProject, readDirRecursive, readPolicy, readProject } from "./helpers";
+import { checkPolicy, isPolicy, isProject, readDirRecursive, readPolicy, readProject, userInteraction } from "./helpers";
 import { PackagesCollection, PolicyData, ProjectData } from "./types";
 
 type getLocalModulesPath = () => Promise<string | null>;

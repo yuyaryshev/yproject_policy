@@ -20,7 +20,10 @@ export const checkPolicy: checkPolicy = (policyData, projectData) => {
                     // TODO: file is ident skip or print message
                     console.log("FILES IDENT", relPath);
                 }
-            } else writeFileSyncWithDir(join(projectDir, relPath), content);
+            } else {
+                // TODO: print message
+                writeFileSyncWithDir(join(projectDir, relPath), content);
+            }
         } catch (error) {
             console.error(error.message);
             process.exit(5);
