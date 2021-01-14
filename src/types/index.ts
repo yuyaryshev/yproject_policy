@@ -46,8 +46,6 @@ export type ProjectData = {
 
 export type FileMap = Map<string, string>;
 
-export type User = any;
-
 export type Match = () => Promise<{ match: string }>;
 
 export type Additional = () => Promise<{ additional: string }>;
