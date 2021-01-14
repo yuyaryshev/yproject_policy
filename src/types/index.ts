@@ -39,7 +39,7 @@ export type ProjectPolicyConfig = {
 };
 
 export type ProjectData = {
-    policyConf: ProjectPolicyConfig | undefined;
+    policyConf: ProjectPolicyConfig;
     files: FileMap;
     packageJson: object | undefined;
     location: string;

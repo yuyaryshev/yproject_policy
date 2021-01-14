@@ -16,6 +16,6 @@ export { userInteraction } from "./userInteraction";
 
 export { globbyGenFilePattern, globbyPolicyDefaultPattern, globbyPolicyFilePattern } from "./regex";
 
-export { isPolicy, isProject } from "./scanDir";
+export { isPolicy, isProject, scanPath, scanCurrentPath, isCheckLocalModule } from "./scanDir";
 
 export { getLocalModulesPath, getTextEditorPath } from "./terminal";
