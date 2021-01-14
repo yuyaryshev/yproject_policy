@@ -1,11 +1,13 @@
 import { FileMap, PolicyData, ProjectData } from "../types";
 import { basename, dirname, join } from "path";
-import { genPolicyFiles, writeFileSyncWithDir } from "../helpers";
+import {genPolicyFiles, writeFileSyncWithDir, match} from "../helpers";
 import { POLICY_EXPECTS_FILE_PREFIX } from "../constant";
+import { openFileDiffFromTextEditor } from "./terminal";
+import chalk from "chalk";
 
-type checkPolicy = (policyData: PolicyData, projectData: ProjectData) => void;
+type checkPolicy = (policyData: PolicyData, projectData: ProjectData) => Promise<void>;
 
-export const checkPolicy: checkPolicy = (policyData, projectData) => {
+export const checkPolicy: checkPolicy = async (policyData, projectData) => {
     const { location: projectDir, files: projectFiles } = projectData;
     const policyFiles: FileMap = new Map([...genPolicyFiles(policyData, projectData), ...policyData.files]);
 
@@ -15,10 +17,7 @@ export const checkPolicy: checkPolicy = (policyData, projectData) => {
                 if (projectFiles.get(relPath) !== content) {
                     console.log("SHOW DIFF: ", relPath);
                     // TODO: use Meld to show file diff (create expects file)
-                    showFileDiff(join(projectDir, relPath), content);
-                } else {
-                    // TODO: file is ident skip or print message
-                    console.log("FILES IDENT", relPath);
+                    await showFileDiff(join(projectDir, relPath), content);
                 }
             } else writeFileSyncWithDir(join(projectDir, relPath), content);
         } catch (error) {
@@ -31,7 +30,7 @@ export const checkPolicy: checkPolicy = (policyData, projectData) => {
         try {
             if (!policyFiles.has(path)) {
                 // TODO: find extra files in project print message
-                console.log("FIND EXTRA FILE: ", path);
+                console.log("FIND EXTRA FILE IN PROJECT: ", path);
             }
         } catch (error) {
             console.error(error.message);
@@ -40,16 +39,23 @@ export const checkPolicy: checkPolicy = (policyData, projectData) => {
     }
 };
 
-type showFileDiff = (path: string, content: string) => void;
+type showFileDiff = (path: string, content: string) => Promise<void>;
 
-export const showFileDiff: showFileDiff = (path, content) => {
+export const showFileDiff: showFileDiff = async (path, content) => {
     try {
         const expectsFilePath = join(dirname(path), `${POLICY_EXPECTS_FILE_PREFIX}${basename(path)}`);
         writeFileSyncWithDir(expectsFilePath, content);
-        console.log("CREATED FILE: ", expectsFilePath);
+        console.log(chalk.red("CREATED FILE: ", expectsFilePath));
         console.log("FOR SHOW DIFF: ", path);
 
         //TODO: use meld for show difference
+        const mat = await match().then(prom => prom.match)
+        if (mat === "compare"){
+            await openFileDiffFromTextEditor(expectsFilePath, path);
+        }else if(mat === "replace"){
+            //TODO: Rewrite rile & remove file-prefix
+            //fs.copyFileSync()
+        }
     } catch (error) {
         console.error(error.message);
         process.exit(5);

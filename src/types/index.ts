@@ -1,5 +1,4 @@
 import { Dirent } from "fs";
-import exp from "constants";
 
 export type ReadDirCallback = (path: string, dirEntry: Dirent) => true | false | undefined | void;
 
@@ -39,9 +38,9 @@ export type ProjectPolicyConfig = {
 };
 
 export type ProjectData = {
-    policyConf: ProjectPolicyConfig | undefined;
+    policyConf: ProjectPolicyConfig;
     files: FileMap;
-    packageJson: object | undefined;
+    packageJson: object;
     location: string;
 };
 
@@ -52,6 +51,8 @@ export type User = any;
 export type Match = () => Promise<{ match: string }>;
 
 export type Additional = () => Promise<{ additional: string }>;
+
+export type PolicyNotFound = () => Promise<{ policyNotFound: string }>;
 
 export type GlobbyPattern = string;
 
