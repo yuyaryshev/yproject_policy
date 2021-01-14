@@ -5,6 +5,7 @@ import { checkPolicy, isPolicy, isProject, readDirRecursive, readPolicy, readPro
 import { PackagesCollection, PolicyData, ProjectData } from "./types";
 import { match, additional, policyNotFound, showResult} from "./helpers"
 import {assertWhileStatement} from "@babel/types";
+import chalk from "chalk";
 
 type getLocalModulesPath = () => Promise<string | null>;
 
@@ -86,7 +87,7 @@ module.exports.run = async () => {
                     console.log("START CHECK POLICY: ", policyName, projectData.location);
                     console.log("#######################################################");
                     // @ts-ignore
-                    checkPolicy(scanResult.policies.get(policyName), projectData);
+                    await checkPolicy(scanResult.policies.get(policyName), projectData);
                     console.log("#######################################################");
                 }
                 else {
@@ -94,7 +95,7 @@ module.exports.run = async () => {
                     if (localModulesPath2 != null) {
                         await scanPath(localModulesPath2, scanResult, true)
                         console.log("#######################################################");
-                        console.log("Policy not found: " ,policyName);
+                        console.log(chalk.red("Policy not found: " ,policyName));
                         console.log("#######################################################");
                     }
                 }
@@ -113,3 +114,4 @@ module.exports.run = async () => {
         process.exit(1);
     }
 };
+
