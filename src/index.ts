@@ -14,8 +14,7 @@ import {
     policyNotFound,
     showResult,
 } from "./helpers";
-import { PackagesCollection, PolicyData, ProjectData, PackagesCollection, PolicyData, ProjectData } from "./types";
-import { assertWhileStatement } from "@babel/types";
+import { PackagesCollection, PolicyData, ProjectData } from "./types";
 import chalk from "chalk";
 
 module.exports.run = async () => {

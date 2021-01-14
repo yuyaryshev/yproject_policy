@@ -1,5 +1,4 @@
 import { Dirent } from "fs";
-import exp from "constants";
 
 export type ReadDirCallback = (path: string, dirEntry: Dirent) => true | false | undefined | void;
 
