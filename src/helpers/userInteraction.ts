@@ -1,4 +1,4 @@
-import { User, Match, Additional } from "src/types";
+import { User, Match, Additional, PolicyNotFound } from "src/types";
 import inquirer from "inquirer";
 
 type userInteraction = () => User;
@@ -31,7 +31,16 @@ export const additional: Additional = async () => {
     ]);
 };
 
-export const userInteraction: userInteraction = async () => {
-    console.log(await match());
-    console.log(await additional());
+export const policyNotFound: PolicyNotFound = async () => {
+    return inquirer.prompt([
+        {
+            type: "list",
+            name: "policyNotFound",
+            message: "Try to find policies at local_packages_folder?",
+            choices: ["Try", "Skip"],
+            filter: function (val: string) {
+                return val.toLowerCase();
+            },
+        },
+    ]);
 };

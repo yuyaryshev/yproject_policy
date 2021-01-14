@@ -1,10 +1,27 @@
-import { checkPolicy, getLocalModulesPath, isCheckLocalModule, scanCurrentPath, scanPath } from "./helpers";
-import { PackagesCollection, PolicyData, ProjectData } from "./types";
+import {
+    checkPolicy,
+    getLocalModulesPath,
+    isCheckLocalModule,
+    scanCurrentPath,
+    scanPath,
+    isPolicy,
+    isProject,
+    readDirRecursive,
+    readPolicy,
+    readProject,
+    match,
+    additional,
+    policyNotFound,
+    showResult,
+} from "./helpers";
+import { PackagesCollection, PolicyData, ProjectData, PackagesCollection, PolicyData, ProjectData } from "./types";
+import { assertWhileStatement } from "@babel/types";
+import chalk from "chalk";
 
 module.exports.run = async () => {
     try {
         const args = require("args");
-        args.option("all", 'will check all your projects in "local_packages_folder"', false);
+        args.option("all", "will check all your projects in \"local_packages_folder\"", false);
 
         const { all: scanLocalModules } = args.parse(process.argv);
 
@@ -18,12 +35,17 @@ module.exports.run = async () => {
 
         if (scanLocalModules && localModulesPath != null) {
             //TODO: вывести сообщение о найденных проектах и политиках
+            console.log("Local Modules Path Found: ", localModulesPath);
+            console.log("Start scan Local Modules Packages");
             await scanPath(localModulesPath, scanResult);
+            showResult(scanResult);
         } else {
             //TODO: вывести сообщение о найденных проектах и политиках
+            console.log("Start scan current path");
             await scanCurrentPath(currentPath, scanResult);
+            showResult(scanResult);
         }
-        console.log(scanResult);
+        //console.log(scanResult);
         //TODO: определить найдены ли у всех проектов политики (в scanResult.policies по ключу и scanResult.projects.policyConf.policy) добавить интерактивность выбора
 
         let missingProject = getMissingPolicies(scanResult);
@@ -44,14 +66,32 @@ module.exports.run = async () => {
 
         for (let projectData of scanResult.projects.values()) {
             try {
-                if (scanResult.policies.has(projectData.policyConf.policy)) {
+                if (scanResult.policies.has(projectData.policyConf.policy){
                     const policy: PolicyData = scanResult.policies.get(projectData.policyConf.policy) as PolicyData;
+                    console.log("#######################################################");
+                    console.log("START CHECK POLICY: ", projectData.policyConf.policy, projectData.location);
+                    console.log("#######################################################");
                     await checkPolicy(policy, projectData);
+                    console.log("#######################################################");
+                } else {
+                    const localModulesPath2: string | null = localModulesPath ?? (await getLocalModulesPath());
+                    if (localModulesPath2 != null) {
+                        await scanPath(localModulesPath2, scanResult, true);
+                        console.log("#######################################################");
+                        console.log(chalk.red("Policy not found: ", projectData.policyConf.policy));
+                        console.log("#######################################################");
+                    }
                 }
             } catch (error) {
                 console.error(error.message);
             }
         }
+        const checkPolicyManually = (prom: string) => {
+            if (prom == "Try" && localModulesPath !== null) {
+                scanPath(currentPath, scanResult);
+            }
+        };
+        await policyNotFound().then((prom) => checkPolicyManually(prom.policyNotFound));
     } catch (error) {
         console.error(error.message);
         process.exit(1);
