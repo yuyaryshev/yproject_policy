@@ -1,6 +1,6 @@
 import { FileMap, PolicyData, ProjectData } from "../types";
 import { basename, dirname, join } from "path";
-import { genPolicyFiles, writeFileSyncWithDir, match } from "../helpers";
+import { genPolicyFiles, writeFileSyncWithDir, match, additional } from "../helpers";
 import { POLICY_EXPECTS_FILE_PREFIX } from "../constant";
 import { openFileDiffFromTextEditor } from "./terminal";
 import chalk from "chalk";
@@ -29,9 +29,22 @@ export const checkPolicy: checkPolicy = async (policyData, projectData) => {
     for (let path of projectFiles.keys()) {
         try {
             if (!policyFiles.has(path)) {
-                // TODO: find extra files in project print message
                 console.log("FIND EXTRA FILE IN PROJECT: ", path);
-                // TODO: тут нужно варианты добавить что с ними делать (пропустить или удалить)
+                let exit = false;
+                while (!exit) {
+                    const mat = (await additional(path)).additional;
+                    switch (mat) {
+                        case "delete":
+                            removeFileSync(join(projectDir, path));
+                            exit = true;
+                            break;
+                        case "skip":
+                            exit = true;
+                            break;
+                        default:
+                            exit = true;
+                    }
+                }
             }
         } catch (error) {
             console.error(error.message);
