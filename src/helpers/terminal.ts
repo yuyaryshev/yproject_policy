@@ -1,5 +1,6 @@
 import execa from "execa";
 import { LOCAL_PACKAGES_FOLDER, TEXT_EDITOR } from "../constant";
+import chalk from "chalk";
 
 type getDataFroNpmConfig = () => Promise<string | null>;
 
@@ -23,6 +24,7 @@ export const openFileDiffFromTextEditor: openFileDiffFromTextEditor = async (bas
             return true;
         }
         // TODO: выдать сообщение что текстовый редактор не найден
+        console.log(chalk.red("Text editor not found"))
         return false;
     } catch (error) {
         //TODO: вывод сообщения об ошибке

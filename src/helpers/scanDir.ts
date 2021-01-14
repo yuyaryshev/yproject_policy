@@ -5,6 +5,7 @@ import { PackagesCollection } from "../types";
 import { readDirRecursive } from "./readDirRecursive";
 import { readPolicy } from "./readPolicy";
 import { readProject } from "./readProject";
+import chalk from "chalk";
 
 type scanDirFunction = (path: string) => boolean;
 
@@ -54,6 +55,7 @@ export const scanCurrentPath: scanCurrentPath = async (dirPath, scanResult) => {
         scanResult.projects.set(dirPath, readProject(dirPath));
         try {
             //TODO: вывести сообщение что будет осуществлен поиск политик в родительской директории
+            console.log(chalk.red("Trying to find policies at a parent directory"))
             await scanPath(join(dirPath, "../"), scanResult, true);
         } catch (error) {
             console.error(error.message);
