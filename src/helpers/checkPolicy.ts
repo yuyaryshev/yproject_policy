@@ -34,8 +34,8 @@ export const checkPolicy: checkPolicy = async (policyData, projectData) => {
                 // TODO: тут нужно варианты добавить что с ними делать (пропустить или удалить)
                 let exit = false;
                 while (!exit) {
-                    const mat = await match().then((prom) => prom.match);
-                    switch (mat) {
+                    const addition = await additional().then((prom) => prom.additional);
+                    switch (addition) {
                         case "delete":
                             removeFileSync(path);
                             break;
