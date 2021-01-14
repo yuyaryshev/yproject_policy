@@ -1,14 +1,6 @@
-import execa from "execa";
 import { join } from "path";
-import { checkPolicy, isPolicy, isProject, readDirRecursive, readPolicy, readProject, userInteraction } from "./helpers";
+import { checkPolicy, getLocalModulesPath, isPolicy, isProject, readDirRecursive, readPolicy, readProject } from "./helpers";
 import { PackagesCollection, PolicyData, ProjectData } from "./types";
-
-type getLocalModulesPath = () => Promise<string | null>;
-
-const getLocalModulesPath: getLocalModulesPath = async () => {
-    const { stdout } = await execa("npm config get", ["local_packages_folder"]);
-    return stdout !== "undefined" ? stdout : null;
-};
 
 type scanPath = (path: string, scanResult: PackagesCollection, onlyPolicies?: boolean) => Promise<void>;
 
@@ -39,6 +31,8 @@ const scanCurrentPath: scanPath = async (dirPath, scanResult) => {
         } catch (error) {
             console.error(error.message);
         }
+    } else {
+        await scanPath(dirPath, scanResult);
     }
 };
 
@@ -77,7 +71,7 @@ module.exports.run = async () => {
                     console.log("START CHECK POLICY: ", policyName, projectData.location);
                     console.log("#######################################################");
                     // @ts-ignore
-                    checkPolicy(scanResult.policies.get(policyName), projectData);
+                    await checkPolicy(scanResult.policies.get(policyName), projectData);
                     console.log("#######################################################");
                 }
             } catch (error) {

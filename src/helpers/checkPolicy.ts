@@ -2,10 +2,11 @@ import { FileMap, PolicyData, ProjectData } from "../types";
 import { basename, dirname, join } from "path";
 import { genPolicyFiles, writeFileSyncWithDir } from "../helpers";
 import { POLICY_EXPECTS_FILE_PREFIX } from "../constant";
+import { openFileDiffFromTextEditor } from "./terminal";
 
-type checkPolicy = (policyData: PolicyData, projectData: ProjectData) => void;
+type checkPolicy = (policyData: PolicyData, projectData: ProjectData) => Promise<void>;
 
-export const checkPolicy: checkPolicy = (policyData, projectData) => {
+export const checkPolicy: checkPolicy = async (policyData, projectData) => {
     const { location: projectDir, files: projectFiles } = projectData;
     const policyFiles: FileMap = new Map([...genPolicyFiles(policyData, projectData), ...policyData.files]);
 
@@ -15,7 +16,7 @@ export const checkPolicy: checkPolicy = (policyData, projectData) => {
                 if (projectFiles.get(relPath) !== content) {
                     console.log("SHOW DIFF: ", relPath);
                     // TODO: use Meld to show file diff (create expects file)
-                    showFileDiff(join(projectDir, relPath), content);
+                    await showFileDiff(join(projectDir, relPath), content);
                 } else {
                     // TODO: file is ident skip or print message
                     console.log("FILES IDENT", relPath);
@@ -43,9 +44,9 @@ export const checkPolicy: checkPolicy = (policyData, projectData) => {
     }
 };
 
-type showFileDiff = (path: string, content: string) => void;
+type showFileDiff = (path: string, content: string) => Promise<void>;
 
-export const showFileDiff: showFileDiff = (path, content) => {
+export const showFileDiff: showFileDiff = async (path, content) => {
     try {
         const expectsFilePath = join(dirname(path), `${POLICY_EXPECTS_FILE_PREFIX}${basename(path)}`);
         writeFileSyncWithDir(expectsFilePath, content);
@@ -53,6 +54,7 @@ export const showFileDiff: showFileDiff = (path, content) => {
         console.log("FOR SHOW DIFF: ", path);
 
         //TODO: use meld for show difference
+        await openFileDiffFromTextEditor(expectsFilePath, path);
     } catch (error) {
         console.error(error.message);
         process.exit(5);
