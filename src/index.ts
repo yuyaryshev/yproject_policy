@@ -4,13 +4,6 @@ import {
     isCheckLocalModule,
     scanCurrentPath,
     scanPath,
-    isPolicy,
-    isProject,
-    readDirRecursive,
-    readPolicy,
-    readProject,
-    match,
-    additional,
     policyNotFound,
     showResult,
 } from "./helpers";
@@ -65,7 +58,7 @@ module.exports.run = async () => {
 
         for (let projectData of scanResult.projects.values()) {
             try {
-                if (scanResult.policies.has(projectData.policyConf.policy){
+                if (scanResult.policies.has(projectData.policyConf.policy)){
                     const policy: PolicyData = scanResult.policies.get(projectData.policyConf.policy) as PolicyData;
                     console.log("#######################################################");
                     console.log("START CHECK POLICY: ", projectData.policyConf.policy, projectData.location);
