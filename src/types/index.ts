@@ -53,6 +53,7 @@ export type Match = () => Promise<{ match: string }>;
 
 export type Additional = () => Promise<{ additional: string }>;
 
+
 export type GlobbyPattern = string;
 
 export type GlobbyPatternCollection = Array<string>;

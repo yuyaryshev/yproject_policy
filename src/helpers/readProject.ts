@@ -1,8 +1,22 @@
-import { relative, join } from "path";
+import {relative, join, posix} from "path";
 import fs from "fs";
-import { ProjectData, ReadDirCallback } from "src/types";
-import { readDirRecursive } from "../helpers";
-import { PROJECT_POLICY_CONFIG_FILENAME, EXCLUDE_FROM_PROJECT_REGEX, PACKAGE_JSON } from "../constant";
+import {
+    FileMap,
+    GenFilesMap,
+    GlobbyPatternCollection,
+    PolicyData,
+    PolicyDefinition,
+    ProjectData,
+    ReadDirCallback
+} from "src/types";
+import {globbyGenFilePattern, globbyPolicyDefaultPattern, globbyPolicyFilePattern, readDirRecursive} from "../helpers";
+import {
+    PROJECT_POLICY_CONFIG_FILENAME,
+    EXCLUDE_FROM_PROJECT_REGEX,
+    PACKAGE_JSON,
+    POLICY_DEFINITION_FILENAME
+} from "../constant";
+import globby from "globby";
 
 const { directories: excludeDirs, files: excludeFiles } = EXCLUDE_FROM_PROJECT_REGEX;
 
@@ -61,3 +75,59 @@ export const readProject: readProjectType = (projectDir) => {
 
     return projectData;
 };
+
+
+
+
+
+export const readProjec: readProjectType = (projectDir:string) => {
+    try {
+        const policy: PolicyDefinition = require(join(projectDir, PROJECT_POLICY_CONFIG_FILENAME));
+        const files: FileMap = getProjectFiles(projectDir, policy);
+        const packageJson: object = require(join(projectDir, PACKAGE_JSON));
+        const location: string = projectDir;
+
+        return {
+            policy,
+            files,
+            packageJson,
+            location,
+        };
+    } catch (error) {
+        console.error(error.message);
+        process.exit(1);
+    }
+};
+
+type getProjectFiles<T> = (path: string, policyConfig: PolicyDefinition) => T;
+
+const getProjectFiles: getProjectFiles<FileMap> = (path, policyConfig) => {
+    const result: FileMap = new Map();
+    for (let relPath of scanProjectFiles(posix.normalize(path), globbyPolicyFilePattern, policyConfig)) {
+        try {
+            result.set(relPath, fs.readFileSync(join(path, relPath)).toString());
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+
+    return result;
+};
+
+type scanProjectFiles = (posixPath: string, globbyPatternCollection: GlobbyPatternCollection, policyConfig: PolicyDefinition) => Array<string>;
+
+const scanProjectFiles: scanProjectFiles = (posixPath, globbyPatternCollection, policyConfig) => {
+    return globby.sync(
+        [
+            ...globbyPatternCollection,
+            ...globbyPolicyDefaultPattern,
+            ...(policyConfig.defaultOptions.exclude ? policyConfig.defaultOptions.exclude.map((p) => `!${p}`) : []),
+        ],
+        {
+            onlyFiles: true,
+            cwd: posixPath,
+        },
+    );
+};
+
+readProjec("C:\\Users\\Ravil\\Documents\\GitHub\\yproject_policy_projects\\test_project")

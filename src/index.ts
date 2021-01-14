@@ -1,7 +1,9 @@
+// @ts-ignore
 import execa from "execa";
 import { join } from "path";
 import { checkPolicy, isPolicy, isProject, readDirRecursive, readPolicy, readProject } from "./helpers";
 import { PackagesCollection, PolicyData, ProjectData } from "./types";
+import { match, additional} from "./helpers"
 
 type getLocalModulesPath = () => Promise<string | null>;
 
@@ -54,7 +56,8 @@ module.exports.run = async () => {
             projects: new Map<string, ProjectData>(),
         };
 
-        const currentPath: string = process.cwd();
+        //const currentPath: string = process.cwd();
+        const currentPath: string ="C:\\Users\\Ravil\\Documents\\GitHub\\yproject_policy_projects\\test_project";
         const localModulesPath: string | null = scanLocalModules ? await getLocalModulesPath() : null;
 
         if (localModulesPath != null) {
