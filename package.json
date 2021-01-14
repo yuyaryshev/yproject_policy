@@ -8,7 +8,7 @@
     "multi-repo"
   ],
   "bin": {
-    "yproject_policy": "./bin/index.js"
+    "yproject_policy": "./bin/index.cjs"
   },
   "files": [
     "/bin",
@@ -72,6 +72,7 @@
     "@babel/template": "7.12.7",
     "@babel/traverse": "7.12.9",
     "@babel/types": "7.12.7",
+    "@types/inquirer": "^7.3.1",
     "@types/node": "^14.14.16",
     "babel-loader": "8.2.2",
     "babel-plugin-add-import-extension": "^1.4.3",
@@ -81,6 +82,7 @@
     "prettier": "^2.0.5"
   },
   "dependencies": {
+    "args": "^5.0.1",
     "chalk": "^4.1.0",
     "execa": "^5.0.0",
     "globby": "^11.0.2",

@@ -13,3 +13,7 @@ export { writeFileSyncWithDir } from "./writeFileSyncWithDir";
 export { readProject } from "./readProject";
 
 export { userInteraction } from "./userInteraction";
+
+export { globbyGenFilePattern, globbyPolicyDefaultPattern, globbyPolicyFilePattern } from "./regex";
+
+export { isPolicy, isProject } from "./scanDir";

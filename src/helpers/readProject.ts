@@ -1,7 +1,7 @@
 import { relative, join } from "path";
 import fs from "fs";
 import { ProjectData, ReadDirCallback } from "src/types";
-import { readDirRecursive } from "./readDirRecursive";
+import { readDirRecursive } from "../helpers";
 import { PROJECT_POLICY_CONFIG_FILENAME, EXCLUDE_FROM_PROJECT_REGEX, PACKAGE_JSON } from "../constant";
 
 const { directories: excludeDirs, files: excludeFiles } = EXCLUDE_FROM_PROJECT_REGEX;

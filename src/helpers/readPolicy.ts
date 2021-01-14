@@ -3,7 +3,7 @@ import globby from "globby";
 import { FileMap, GenFilesMap, GlobbyPatternCollection, PolicyData, PolicyDefinition } from "src/types";
 import { POLICY_DEFINITION_FILENAME } from "../constant";
 import { globbyGenFilePattern, globbyPolicyDefaultPattern, globbyPolicyFilePattern } from "./regex";
-import * as fs from "fs";
+import fs from "fs";
 
 type readPolicyType = (projectDir: string) => PolicyData;
 

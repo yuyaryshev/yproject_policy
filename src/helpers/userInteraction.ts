@@ -1,11 +1,10 @@
 import { User, Match, Additional } from "src/types";
-
-const inquirer = require("inquirer");
+import inquirer from "inquirer";
 
 type userInteraction = () => User;
 
 export const match: Match = async () => {
-    return await inquirer.prompt([
+    return inquirer.prompt([
         {
             type: "list",
             name: "match",
@@ -19,7 +18,7 @@ export const match: Match = async () => {
 };
 
 export const additional: Additional = async () => {
-    return await inquirer.prompt([
+    return inquirer.prompt([
         {
             type: "list",
             name: "additional",
@@ -33,6 +32,37 @@ export const additional: Additional = async () => {
 };
 
 export const userInteraction: userInteraction = async () => {
-    console.log(await match());
-    console.log(await additional());
+    // console.log(await match());
+    // console.log(await additional());
+    inquirer
+        .prompt([
+            {
+                type: 'list',
+                name: 'theme',
+                message: 'What do you want to do?',
+                choices: [
+                    'Order a pizza',
+                    'Make a reservation',
+                    new inquirer.Separator(),
+                    'Ask for opening hours',
+                    {
+                        name: 'Contact support',
+                        disabled: 'Unavailable at this time',
+                    },
+                    'Talk to the receptionist',
+                ],
+            },
+            {
+                type: 'list',
+                name: 'size',
+                message: 'What size do you need?',
+                choices: ['Jumbo', 'Large', 'Standard', 'Medium', 'Small', 'Micro'],
+                filter: function (val) {
+                    return val.toLowerCase();
+                },
+            },
+        ])
+        .then((answers) => {
+            console.log(JSON.stringify(answers, null, '  '));
+        });
 };

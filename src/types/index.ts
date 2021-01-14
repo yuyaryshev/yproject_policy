@@ -1,4 +1,5 @@
 import { Dirent } from "fs";
+import exp from "constants";
 
 export type ReadDirCallback = (path: string, dirEntry: Dirent) => true | false | undefined | void;
 
@@ -55,3 +56,8 @@ export type Additional = () => Promise<{ additional: string }>;
 export type GlobbyPattern = string;
 
 export type GlobbyPatternCollection = Array<string>;
+
+export type PackagesCollection = {
+    policies: Map<string, PolicyData>;
+    projects: Map<string, ProjectData>;
+};
