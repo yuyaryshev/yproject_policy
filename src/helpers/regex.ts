@@ -1,5 +1,5 @@
 import { GlobbyPatternCollection } from "../types";
-import { PACKAGE_JSON, POLICY_DEFINITION_FILENAME } from "../constant";
+import { PACKAGE_JSON, POLICY_DEFINITION_FILENAME, PROJECT_POLICY_CONFIG_FILENAME } from "../constant";
 
 export const globbyGenFilePattern: GlobbyPatternCollection = ["{*,*/**}*.gen.cjs"];
 
@@ -13,5 +13,6 @@ export const globbyPolicyDefaultPattern: GlobbyPatternCollection = [
     "!*-lock.json",
     "!*.lock",
     `!{*,*/**}${POLICY_DEFINITION_FILENAME}`,
+    `!{*,*/**}${PROJECT_POLICY_CONFIG_FILENAME}`,
     `!${PACKAGE_JSON}`,
 ];
