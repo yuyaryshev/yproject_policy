@@ -1,4 +1,4 @@
-import { User, Match, Additional } from "src/types";
+import { User, Match, Additional, PolicyNotFound } from "src/types";
 // @ts-ignore
 import inquirer from "inquirer";
 
@@ -25,6 +25,20 @@ export const additional: Additional = async () => {
             name: "additional",
             message: "Project contains additional files weren't in policy. ",
             choices: ["Delete", "Skip"],
+            filter: function (val: string) {
+                return val.toLowerCase();
+            },
+        },
+    ]);
+};
+
+export const policyNotFound: PolicyNotFound = async () => {
+    return inquirer.prompt([
+        {
+            type: "list",
+            name: "policyNotFound",
+            message: "Try to find policies at local_packages_folder?",
+            choices: ["Try", "Skip"],
             filter: function (val: string) {
                 return val.toLowerCase();
             },

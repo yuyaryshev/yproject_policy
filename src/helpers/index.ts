@@ -16,4 +16,6 @@ export { globbyGenFilePattern, globbyPolicyDefaultPattern, globbyPolicyFilePatte
 
 export { isPolicy, isProject } from "./scanDir";
 
-export { match, additional } from "./userInteraction"
+export { match, additional, policyNotFound } from "./userInteraction"
+
+export { showResult } from "./showResult"
