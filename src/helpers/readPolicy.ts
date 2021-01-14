@@ -1,61 +1,69 @@
-import { relative, join } from "path";
+import { join, posix } from "path";
+import globby from "globby";
+import { FileMap, GenFilesMap, GlobbyPatternCollection, PolicyData, PolicyDefinition } from "src/types";
+import { POLICY_DEFINITION_FILENAME } from "../constant";
+import { globbyGenFilePattern, globbyPolicyDefaultPattern, globbyPolicyFilePattern } from "./regex";
 import fs from "fs";
-import { PolicyData, PolicyDefinition, PolicyFileGenerator, ReadDirCallback } from "src/types";
-import { genFilesRegex, readDirRecursive } from "../helpers";
-import { POLICY_DEFINITION_FILENAME, EXCLUDE_FROM_POLICY_REGEX } from "../constant";
-
-const { directories: excludeDirs, files: excludeFiles } = EXCLUDE_FROM_POLICY_REGEX;
 
 type readPolicyType = (projectDir: string) => PolicyData;
 
 export const readPolicy: readPolicyType = (projectDir) => {
-    let policy: PolicyDefinition | any = undefined;
-    const files: Map<string, string> = new Map();
-    const genFiles: Map<string, PolicyFileGenerator> = new Map();
+    try {
+        const policy: PolicyDefinition = require(join(projectDir, POLICY_DEFINITION_FILENAME));
+        const genFiles: GenFilesMap = getGenPolicyFiles(projectDir, policy);
+        const files: FileMap = getPolicyFiles(projectDir, policy);
 
-    const readPolicyDefinitionCallback: ReadDirCallback = (path, dirEntry) => {
+        return {
+            policy,
+            genFiles,
+            files,
+        };
+    } catch (error) {
+        console.error(error.message);
+        process.exit(1);
+    }
+};
+
+type scanPolicyFiles = (posixPath: string, globbyPatternCollection: GlobbyPatternCollection, policyConfig: PolicyDefinition) => Array<string>;
+
+const scanPolicyFiles: scanPolicyFiles = (posixPath, globbyPatternCollection, policyConfig) => {
+    return globby.sync(
+        [
+            ...globbyPatternCollection,
+            ...globbyPolicyDefaultPattern,
+            ...(policyConfig.defaultOptions.exclude ? policyConfig.defaultOptions.exclude.map((p) => `!${p}`) : []),
+        ],
+        {
+            onlyFiles: true,
+            cwd: posixPath,
+        },
+    );
+};
+
+type getPolicyFiles<T> = (path: string, policyConfig: PolicyDefinition) => T;
+
+const getGenPolicyFiles: getPolicyFiles<GenFilesMap> = (path, policyConfig) => {
+    const result: GenFilesMap = new Map();
+    for (let relPath of scanPolicyFiles(posix.normalize(path), globbyGenFilePattern, policyConfig)) {
         try {
-            if (dirEntry.isFile() && dirEntry.name === POLICY_DEFINITION_FILENAME) {
-                console.log("FIND POLICY DEFINITION: ", relative(projectDir, join(path, dirEntry.name)));
-                policy = require(join(path, dirEntry.name));
-            }
+            result.set(relPath, require(join(path, relPath)));
         } catch (error) {
             console.error(error.message);
-            process.exit(1);
         }
-        return false;
-    };
+    }
 
-    const readPolicyCallback: ReadDirCallback = (path, dirEntry) => {
+    return result;
+};
+
+const getPolicyFiles: getPolicyFiles<FileMap> = (path, policyConfig) => {
+    const result: FileMap = new Map();
+    for (let relPath of scanPolicyFiles(posix.normalize(path), globbyPolicyFilePattern, policyConfig)) {
         try {
-            const relPath = relative(projectDir, join(path, dirEntry.name));
-            if (dirEntry.isDirectory()) {
-                let check = !excludeDirs.find((pattern) => dirEntry.name.match(pattern));
-                console.log("FIND DIRECTORY: ", relPath, check);
-                return check;
-            }
-            if (dirEntry.name !== POLICY_DEFINITION_FILENAME && !excludeFiles.find((pattern) => dirEntry.name.match(`${pattern}$`))) {
-                if (dirEntry.name.match(genFilesRegex)) {
-                    console.log("FIND GEN FILE: ", relPath);
-                    genFiles.set(relPath.replace(genFilesRegex, ""), require(join(path, dirEntry.name)));
-                } else {
-                    console.log("FIND OTHER FILE: ", relPath);
-                    files.set(relPath, fs.readFileSync(join(path, dirEntry.name)).toString());
-                }
-            }
+            result.set(relPath, fs.readFileSync(join(path, relPath)).toString());
         } catch (error) {
             console.error(error.message);
-            process.exit(1);
         }
-        return false;
-    };
+    }
 
-    readDirRecursive(projectDir, readPolicyDefinitionCallback);
-    readDirRecursive(projectDir, readPolicyCallback);
-
-    return {
-        policy,
-        files,
-        genFiles,
-    };
+    return result;
 };

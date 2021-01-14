@@ -1,4 +1,5 @@
 import { Dirent } from "fs";
+import exp from "constants";
 
 export type ReadDirCallback = (path: string, dirEntry: Dirent) => true | false | undefined | void;
 
@@ -6,6 +7,7 @@ export type ReadDirCallback2 = (path: string, filename: Dirent, parentResult?: a
 
 export type PolicyOptions = {
     ignored?: Array<string>;
+    exclude?: Array<GlobbyPattern>;
     [x: string]: any;
 };
 
@@ -18,15 +20,12 @@ export type PolicyDefinition = {
     defaultOptions: PolicyOptions;
 };
 
+export type GenFilesMap = Map<string, PolicyFileGenerator>;
+
 export type PolicyData = {
     policy: PolicyDefinition;
     files: FileMap;
-    genFiles: Map<string, PolicyFileGenerator>;
-};
-
-export type ExcludeFromPolicy = {
-    directories: Array<string>;
-    files: Array<string>;
+    genFiles: GenFilesMap;
 };
 
 export type ExcludeFromProject = {
@@ -46,10 +45,6 @@ export type ProjectData = {
     location: string;
 };
 
-export type PolicyCollection = Map<string, PolicyData>;
-
-export type ProjectCollection = Map<string, ProjectData>;
-
 export type FileMap = Map<string, string>;
 
 export type User = any;
@@ -57,3 +52,12 @@ export type User = any;
 export type Match = () => Promise<{ match: string }>;
 
 export type Additional = () => Promise<{ additional: string }>;
+
+export type GlobbyPattern = string;
+
+export type GlobbyPatternCollection = Array<string>;
+
+export type PackagesCollection = {
+    policies: Map<string, PolicyData>;
+    projects: Map<string, ProjectData>;
+};
