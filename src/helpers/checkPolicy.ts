@@ -29,17 +29,17 @@ export const checkPolicy: checkPolicy = async (policyData, projectData) => {
     for (let path of projectFiles.keys()) {
         try {
             if (!policyFiles.has(path)) {
-                // TODO: find extra files in project print message
                 console.log("FIND EXTRA FILE IN PROJECT: ", path);
-                // TODO: тут нужно варианты добавить что с ними делать (пропустить или удалить)
                 let exit = false;
                 while (!exit) {
-                    const addition = await additional().then((prom) => prom.additional);
-                    switch (addition) {
+                    const mat = (await additional(path)).additional;
+                    switch (mat) {
                         case "delete":
-                            removeFileSync(path);
+                            removeFileSync(join(projectDir, path));
+                            exit = true;
                             break;
                         case "skip":
+                            exit = true;
                             break;
                         default:
                             exit = true;
