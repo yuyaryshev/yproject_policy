@@ -48,7 +48,7 @@ export type FileMap = Map<string, string>;
 
 export type Match = () => Promise<{ match: string }>;
 
-export type Additional = () => Promise<{ additional: string }>;
+export type Additional = (path?: string | null) => Promise<{ additional: string }>;
 
 export type PolicyNotFound = () => Promise<{ policyNotFound: string }>;
 

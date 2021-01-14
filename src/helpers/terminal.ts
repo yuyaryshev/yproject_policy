@@ -23,11 +23,9 @@ export const openFileDiffFromTextEditor: openFileDiffFromTextEditor = async (bas
             await execa(editorPath, [baseFile, currentFilePath]);
             return true;
         }
-        // TODO: выдать сообщение что текстовый редактор не найден
         console.log(chalk.red("Text editor not found"))
         return false;
     } catch (error) {
-        //TODO: вывод сообщения об ошибке
         console.error(error.message);
         return false;
     }

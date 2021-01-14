@@ -54,7 +54,6 @@ export const scanCurrentPath: scanCurrentPath = async (dirPath, scanResult) => {
     if (isProject(dirPath)) {
         scanResult.projects.set(dirPath, readProject(dirPath));
         try {
-            //TODO: вывести сообщение что будет осуществлен поиск политик в родительской директории
             console.log(chalk.red("Trying to find policies at a parent directory"))
             await scanPath(join(dirPath, "../"), scanResult, true);
         } catch (error) {
