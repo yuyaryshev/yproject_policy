@@ -1,6 +1,6 @@
 import execa from "execa";
 import { join } from "path";
-import { isPolicy, isProject, readDirRecursive, readPolicy, readProject } from "./helpers";
+import { checkPolicy, isPolicy, isProject, readDirRecursive, readPolicy, readProject } from "./helpers";
 import { PackagesCollection, PolicyData, ProjectData } from "./types";
 
 type getLocalModulesPath = () => Promise<string | null>;
@@ -35,7 +35,7 @@ const scanCurrentPath: scanPath = async (dirPath, scanResult) => {
     if (isProject(dirPath)) {
         scanResult.projects.set(dirPath, readProject(dirPath));
         try {
-            await scanPath(join(dirPath, "../"), scanResult,true);
+            await scanPath(join(dirPath, "../"), scanResult, true);
         } catch (error) {
             console.error(error.message);
         }
@@ -67,8 +67,23 @@ module.exports.run = async () => {
             console.log("Start scan current path");
             await scanCurrentPath(currentPath, scanResult);
         }
-        //TODO: определить найдены ли у всех проектов политики (в scanResult.policies по ключу и scanResult.projects.policyConf.policy)
         console.log(scanResult);
+        //TODO: определить найдены ли у всех проектов политики (в scanResult.policies по ключу и scanResult.projects.policyConf.policy) добавить интерактивность выбора
+        for (let projectData of scanResult.projects.values()) {
+            try {
+                const policyName = projectData.policyConf?.policy;
+                if (policyName && scanResult.policies.has(policyName)) {
+                    console.log("#######################################################");
+                    console.log("START CHECK POLICY: ", policyName, projectData.location);
+                    console.log("#######################################################");
+                    // @ts-ignore
+                    checkPolicy(scanResult.policies.get(policyName), projectData);
+                    console.log("#######################################################");
+                }
+            } catch (error) {
+                console.error(error.message);
+            }
+        }
     } catch (error) {
         console.error(error.message);
         process.exit(1);
