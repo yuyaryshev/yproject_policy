@@ -1,8 +1,8 @@
-export { readDirRecursive, readDirRecursive2 } from "./readDirRecursive";
+export * from "./readDirRecursive";
 
-export { writeFileSyncIfChanged } from "./writeFileSyncIfChanged";
+export * from "./writeFileSyncIfChanged";
 
-export { readPolicy } from "./readPolicy";
+export * from "./readPolicy";
 
 export { genPolicyFiles } from "./genPolicyFiles";
 
@@ -14,7 +14,7 @@ export { readProject } from "./readProject";
 
 export { globbyGenFilePattern, globbyPolicyDefaultPattern, globbyPolicyFilePattern } from "./regex";
 
-export { isPolicy, isProject, scanPath, scanCurrentPath, isCheckLocalModule } from "./scanDir";
+export { isPolicy, isProject, loadProjects, scanCurrentPath, isCheckLocalModule } from "./scanDir";
 
 export { getLocalModulesPath, getTextEditorPath } from "./terminal";
 

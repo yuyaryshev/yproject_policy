@@ -27,42 +27,49 @@ export const isPolicy: scanDirFunction = (path) => {
     );
 };
 
-type scanPath = (path: string, scanResult: PackagesCollection, onlyPolicies?: boolean) => Promise<void>;
-
-export const scanPath: scanPath = async (dirPath, scanResult, onlyPolicies = false) => {
-    readDirRecursive(dirPath, (path, dirEntry) => {
+export function loadPolicies(packagesCollection: PackagesCollection, policiesLocation: string) {
+    readDirRecursive(policiesLocation, (path, dirEntry) => {
         if (dirEntry.isDirectory()) {
             const joinPath = join(path, dirEntry.name);
             if (isPolicy(joinPath)) {
                 const policy = readPolicy(joinPath);
-                scanResult.policies.set(policy.policy.policy, policy);
-                return false;
-            }
-            if (!onlyPolicies && isProject(joinPath)) {
-                scanResult.projects.set(joinPath, readProject(joinPath));
+                packagesCollection.policies.set(policy.policy.policy, policy);
                 return false;
             }
             return true;
         }
         return false;
     });
-};
+}
 
-type scanCurrentPath = (path: string, scanResult: PackagesCollection) => Promise<void>;
+export function loadProjects(packagesCollection: PackagesCollection, dirPath: string) {
+    readDirRecursive(dirPath, (path, dirEntry) => {
+        if (dirEntry.isDirectory()) {
+            const joinPath = join(path, dirEntry.name);
+            if (isProject(joinPath)) {
+                packagesCollection.projects.set(joinPath, readProject(joinPath));
+                return false;
+            }
+            return true;
+        }
+        return false;
+    });
+}
 
-export const scanCurrentPath: scanCurrentPath = async (dirPath, scanResult) => {
+export function scanCurrentPath(dirPath: string, packagesCollection: PackagesCollection) {
+    //(isProject(dirPath)?join(dirPath, "../"):dirPath)
     if (isProject(dirPath)) {
-        scanResult.projects.set(dirPath, readProject(dirPath));
+        packagesCollection.projects.set(dirPath, readProject(dirPath));
         try {
-            console.log(chalk.red("Trying to find policies at a parent directory"))
-            await scanPath(join(dirPath, "../"), scanResult, true);
+            console.log(chalk.red("Trying to find policies at a parent directory"));
+            loadProjects(join(dirPath, "../"), packagesCollection, true);
         } catch (error) {
             console.error(error.message);
         }
     } else {
-        await scanPath(dirPath, scanResult);
+        loadProjects(dirPath, packagesCollection);
     }
-};
+}
 
 type isCheckLocalModule = (childPath: string, parentPath: string) => boolean;
 
