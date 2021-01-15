@@ -54,8 +54,3 @@ export type PackagesCollection = {
     policies: Map<string, PolicyData>;
     projects: Map<string, ProjectData>;
 };
-
-export type QuestionData = {
-    question: string;
-    answers: Array<string>;
-};

@@ -1,8 +1,6 @@
-import { QuestionData } from "src/types";
 import inquirer from "inquirer";
 
-
-export async function showQuestion(Question: QuestionData, AdditionalMessage = "") {
+export async function showQuestion(Question: {question: string,  answers: Array<string>}, AdditionalMessage = "") {
     return inquirer.prompt([
         {
             type: "list",
