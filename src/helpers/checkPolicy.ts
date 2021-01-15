@@ -1,14 +1,6 @@
 import { FileMap, PolicyData, ProjectData } from "../types";
 import { basename, dirname, join } from "path";
-import {
-    genPolicyFiles,
-    writeFileSyncWithDir,
-    match,
-    additional,
-    openFileDiffFromTextEditor,
-    removeFileSync,
-    showQuestion,
-} from "../helpers";
+import { genPolicyFiles, writeFileSyncWithDir, openFileDiffFromTextEditor, removeFileSync, showQuestion } from "../helpers";
 import { POLICY_EXPECTS_FILE_PREFIX, FILES_NOT_MATCH, ADDITIONAL_FILES } from "../constant";
 import chalk from "chalk";
 
@@ -27,7 +19,7 @@ export async function checkPolicy(policyData: PolicyData, projectData: ProjectDa
             console.log("FIND EXTRA FILE IN PROJECT: ", path);
             let exit = false;
             while (!exit) {
-                const mat = (await showQuestion(ADDITIONAL_FILES, path)).answer;
+                const mat = await showQuestion(ADDITIONAL_FILES, path);
                 switch (mat) {
                     case "delete":
                         removeFileSync(join(projectDir, path));
@@ -52,7 +44,7 @@ export async function showFileDiff(path: string, content: string): Promise<void>
 
     let exit = false;
     while (!exit) {
-        const mat = (await showQuestion(FILES_NOT_MATCH)).answer;
+        const mat = await showQuestion(FILES_NOT_MATCH);
         switch (mat) {
             case "compare":
                 await openFileDiffFromTextEditor(expectsFilePath, path);

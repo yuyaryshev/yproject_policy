@@ -10,11 +10,6 @@ export const LOCAL_PACKAGES_FOLDER: string = "local_packages_folder";
 
 export const TEXT_EDITOR: string = "text_editor";
 
-export const POLICY_NOT_FOUND = {
-    question: "Try to find policies at local_packages_folder?",
-    answers: ["Try", "Skip"],
-};
-
 export const FILES_NOT_MATCH = {
     question: "Files do not match. What are we gonna do?",
     answers: ["Replace", "Skip", "Compare"],
