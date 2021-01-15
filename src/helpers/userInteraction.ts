@@ -1,44 +1,19 @@
-import { Match, Additional, PolicyNotFound } from "src/types";
+import { QuestionData } from "src/types";
 import inquirer from "inquirer";
 
-export const match: Match = async () => {
-    return inquirer.prompt([
-        {
-            type: "list",
-            name: "match",
-            message: "Files do not match. What are we gonna do?",
-            choices: ["Replace", "Skip", "Compare"],
-            filter: function (val: string) {
-                return val.toLowerCase();
-            },
-        },
-    ]);
-};
 
-export const additional: Additional = async (path=null) => {
+export async function showQuestion(Question: QuestionData, AdditionalMessage = "") {
     return inquirer.prompt([
         {
             type: "list",
-            name: "additional",
-            message: `Project contains additional files weren't in policy. ${path?path:""}`,
-            choices: ["Delete", "Skip"],
+            name: "answer",
+            message: Question.question + " " + AdditionalMessage,
+            choices: Question.answers,
             filter: function (val: string) {
                 return val.toLowerCase();
             },
         },
     ]);
-};
+}
 
-export const policyNotFound: PolicyNotFound = async () => {
-    return inquirer.prompt([
-        {
-            type: "list",
-            name: "policyNotFound",
-            message: "Try to find policies at local_packages_folder?",
-            choices: ["Try", "Skip"],
-            filter: function (val: string) {
-                return val.toLowerCase();
-            },
-        },
-    ]);
-};
+

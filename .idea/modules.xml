@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$USER_HOME$/WebstormProjects/test/.idea/test.iml" filepath="$USER_HOME$/WebstormProjects/test/.idea/test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/yproject_policy.iml" filepath="$PROJECT_DIR$/.idea/yproject_policy.iml" />
       <module fileurl="file://$PROJECT_DIR$/../yproject_policy_projects/.idea/yproject_policy_porjects.iml" filepath="$PROJECT_DIR$/../yproject_policy_projects/.idea/yproject_policy_porjects.iml" />
       <module fileurl="file://$PROJECT_DIR$/../yproject_policy_projects/.idea/yproject_policy_projects.iml" filepath="$PROJECT_DIR$/../yproject_policy_projects/.idea/yproject_policy_projects.iml" />

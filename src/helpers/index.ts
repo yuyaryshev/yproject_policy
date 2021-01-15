@@ -18,6 +18,6 @@ export { isPolicy, isProject, loadProjects, scanCurrentPath, isCheckLocalModule 
 
 export { getLocalModulesPath, getTextEditorPath } from "./terminal";
 
-export { match, additional, policyNotFound } from "./userInteraction";
+export { showQuestion } from "./userInteraction";
 
 export { showResult } from "./showResult";

@@ -46,12 +46,6 @@ export type ProjectData = {
 
 export type FileMap = Map<string, string>;
 
-export type Match = () => Promise<{ match: string }>;
-
-export type Additional = (path?: string | null) => Promise<{ additional: string }>;
-
-export type PolicyNotFound = () => Promise<{ policyNotFound: string }>;
-
 export type GlobbyPattern = string;
 
 export type GlobbyPatternCollection = Array<string>;
@@ -59,4 +53,9 @@ export type GlobbyPatternCollection = Array<string>;
 export type PackagesCollection = {
     policies: Map<string, PolicyData>;
     projects: Map<string, ProjectData>;
+};
+
+export type QuestionData = {
+    question: string;
+    answers: Array<string>;
 };

@@ -1,13 +1,13 @@
 import {
     checkPolicy, getLocalModulesPath, isCheckLocalModule, scanCurrentPath, loadProjects, policyNotFound, showResult,
-    isProject, readProject
+    isProject, readProject, showQuestion
 } from "./helpers";
 import { PackagesCollection, PolicyData, ProjectData } from "./types";
 import chalk from "chalk";
 import * as args from "args";
 import { checkOneProject } from "./checkOneProject";
 import { checkAllProjects } from "./checkAllProject";
-import { LOCAL_PACKAGES_FOLDER } from "./constant";
+import { LOCAL_PACKAGES_FOLDER, POLICY_NOT_FOUND } from "./constant";
 import { loadPolicies } from "./helpers/scanDir";
 
 module.exports.run = async () => {
@@ -74,7 +74,7 @@ module.exports.run = async () => {
         if (missingProject.size > 0 && localModulesPath) {
             console.log("SOME POLICE NOT FOUND");
             if (!isCheckLocalModule(currentPath, localModulesPath) && !scanLocalModules) {
-                const answer: string = (await policyNotFound()).policyNotFound;
+                const answer: string = (await showQuestion(POLICY_NOT_FOUND)).answer;
                 switch (answer) {
                     case "try":
                         await loadProjects(scanResult, localModulesPath, true);

@@ -1,4 +1,5 @@
-import { ExcludeFromProject } from "src/types";
+import { ExcludeFromProject, QuestionData } from "src/types";
+import {strict} from "assert";
 
 export const POLICY_DEFINITION_FILENAME: string = "project_policy_definition.cjs";
 
@@ -16,3 +17,18 @@ export const EXCLUDE_FROM_PROJECT_REGEX: ExcludeFromProject = {
 export const LOCAL_PACKAGES_FOLDER: string = "local_packages_folder";
 
 export const TEXT_EDITOR: string = "text_editor";
+
+export const POLICY_NOT_FOUND: QuestionData = {
+    question: "Try to find policies at local_packages_folder?",
+    answers: ['Try', 'Skip'],
+}
+
+export const FILES_NOT_MATCH: QuestionData = {
+    question: "Files do not match. What are we gonna do?",
+    answers: ["Replace", "Skip", "Compare"],
+}
+
+export const ADDITIONAL_FILES: QuestionData = {
+    question: "Files do not match. What are we gonna do?",
+    answers: ["Replace", "Skip"],
+}
