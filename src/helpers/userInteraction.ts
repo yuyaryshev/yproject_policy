@@ -9,9 +9,7 @@ export async function showQuestion(Question: {question: string,  answers: Array<
             choices: Question.answers,
             filter: function (val: string) {
                 return val.toLowerCase();
-            },
+            }
         },
     ]);
 }
-
-
