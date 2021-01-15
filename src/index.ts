@@ -1,10 +1,17 @@
-import { checkPolicy, getLocalModulesPath, isCheckLocalModule, scanCurrentPath, scanPath, policyNotFound, showResult } from "./helpers";
+import {
+    checkPolicy, getLocalModulesPath, isCheckLocalModule, scanCurrentPath, loadProjects, policyNotFound, showResult,
+    isProject, readProject
+} from "./helpers";
 import { PackagesCollection, PolicyData, ProjectData } from "./types";
 import chalk from "chalk";
+import * as args from "args";
+import { checkOneProject } from "./checkOneProject";
+import { checkAllProjects } from "./checkAllProject";
+import { LOCAL_PACKAGES_FOLDER } from "./constant";
+import { loadPolicies } from "./helpers/scanDir";
 
 module.exports.run = async () => {
     try {
-        const args = require("args");
         args.option("all", 'will check all your projects in "local_packages_folder"', false);
 
         const { all: scanLocalModules } = args.parse(process.argv);
@@ -16,15 +23,51 @@ module.exports.run = async () => {
 
         const currentPath: string = process.cwd();
         const localModulesPath: string | null = await getLocalModulesPath();
+        //
 
-        if (scanLocalModules && localModulesPath != null) {
-            console.log("Local Modules Path Found: ", localModulesPath);
-            console.log("Start scan Local Modules Packages");
-            await scanPath(localModulesPath, scanResult);
-        } else {
-            console.log("Start scan current path");
-            await scanCurrentPath(currentPath, scanResult);
+        // Находимся в папке с проектами и хотим проверить их всех
+        // checkAllProjects
+
+        // c:\LOCAL_PACKAGES_FOLDER  <---- LOCAL_PACKAGES_FOLDER
+        //      policy1
+        //      project1
+        //      project2
+        //      project3
+        //      project4
+        //      policy2
+        //      local_package1
+        //      local_package2
+        //      local_package3
+
+        if(!localModulesPath) {
+            console.error(`CODE00000000 Please use 'npm config set ${LOCAL_PACKAGES_FOLDER}' to define projects folder.`);
+            process.exit(1);
         }
+
+        const packagesCollection:PackagesCollection = {
+            policies: new Map(),
+            projects:new  Map(),
+        };
+
+        loadPolicies( packagesCollection,localModulesPath);
+
+        // Находимся в проекте, хотим его проверить
+        if (isProject(currentPath)) {
+            packagesCollection.projects.set(currentPath, readProject(currentPath));
+            // TODO checkOneProject(currentPath);
+        } else {
+            loadProjects(scanResult, localModulesPath);
+            // TODO checkAllProjects(localModulesPath);
+        }
+
+        // if (scanLocalModules && localModulesPath != null) {
+        //     console.log("Local Modules Path Found: ", localModulesPath);
+        //     console.log("Start scan Local Modules Packages");
+        //     loadProjects(scanResult, localModulesPath);
+        // } else {
+        //     console.log("Start scan current path");
+        //     scanCurrentPath(currentPath, scanResult);
+        // }
         showResult(scanResult);
 
         let missingProject = getMissingPolicies(scanResult);
@@ -34,7 +77,7 @@ module.exports.run = async () => {
                 const answer: string = (await policyNotFound()).policyNotFound;
                 switch (answer) {
                     case "try":
-                        await scanPath(localModulesPath, scanResult, true);
+                        await loadProjects(scanResult, localModulesPath, true);
                         missingProject = getMissingPolicies(scanResult);
                         if (missingProject.size > 0) removeProjectFromScan(scanResult, missingProject);
                         break;
@@ -60,7 +103,7 @@ module.exports.run = async () => {
                 } else {
                     const localModulesPath2: string | null = localModulesPath ?? (await getLocalModulesPath());
                     if (localModulesPath2 != null) {
-                        await scanPath(localModulesPath2, scanResult, true);
+                        await loadProjects(scanResult, localModulesPath2, true);
                         console.log("#######################################################");
                         console.log(chalk.red("Policy not found: ", projectData.policyConf.policy));
                         console.log("#######################################################");
