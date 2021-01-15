@@ -1,50 +1,12 @@
 import { Dirent } from "fs";
+import { PolicyData, PolicyFileGenerator } from "./policy";
+import { ProjectData } from "./project";
+
+export * from "./policy";
+
+export * from "./project";
 
 export type ReadDirCallback = (path: string, dirEntry: Dirent) => true | false | undefined | void;
-
-export type ReadDirCallback2 = (path: string, filename: Dirent, parentResult?: any | undefined) => any | undefined | void;
-
-export type PolicyOptions = {
-    ignored?: Array<string>;
-    exclude?: Array<GlobbyPattern>;
-    [x: string]: any;
-};
-
-export type PolicyFileGenerator = {
-    generate: (packageJson: object, policyOptions: PolicyOptions) => string;
-};
-
-export type PolicyDefinition = {
-    policy: string;
-    defaultOptions: PolicyOptions;
-};
-
-export type GenFilesMap = Map<string, PolicyFileGenerator>;
-
-export type PolicyData = {
-    policy: PolicyDefinition;
-    files: FileMap;
-    genFiles: GenFilesMap;
-};
-
-export type ExcludeFromProject = {
-    directories: Array<string>;
-    files: Array<string>;
-};
-
-export type ProjectPolicyConfig = {
-    policy: string;
-    options?: PolicyOptions;
-};
-
-export type ProjectData = {
-    policyConf: ProjectPolicyConfig;
-    files: FileMap;
-    packageJson: object;
-    location: string;
-};
-
-export type FileMap = Map<string, string>;
 
 export type Match = () => Promise<{ match: string }>;
 
@@ -52,9 +14,13 @@ export type Additional = (path?: string | null) => Promise<{ additional: string 
 
 export type PolicyNotFound = () => Promise<{ policyNotFound: string }>;
 
-export type GlobbyPattern = string;
+export type Filter = string;
 
-export type GlobbyPatternCollection = Array<string>;
+export type GenFilesMap = Map<string, PolicyFileGenerator>;
+
+export type FileMap = Map<string, string>;
+
+export type FilterCollection = Array<Filter>;
 
 export type PackagesCollection = {
     policies: Map<string, PolicyData>;

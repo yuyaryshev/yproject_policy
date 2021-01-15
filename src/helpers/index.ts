@@ -1,23 +1,23 @@
 export * from "./readDirRecursive";
 
-export * from "./writeFileSyncIfChanged";
-
 export * from "./readPolicy";
 
-export { genPolicyFiles } from "./genPolicyFiles";
+export * from "./genPolicyFiles";
 
-export { checkPolicy } from "./checkPolicy";
+export * from "./checkPolicy";
 
-export { writeFileSyncWithDir } from "./writeFileSyncWithDir";
+export * from "./writeFileSyncWithDir";
 
-export { readProject } from "./readProject";
+export * from "./readProject";
 
-export { globbyGenFilePattern, globbyPolicyDefaultPattern, globbyPolicyFilePattern } from "./regex";
+export * from "./scanDir";
 
-export { isPolicy, isProject, loadProjects, scanCurrentPath, isCheckLocalModule } from "./scanDir";
+export * from "./terminal";
 
-export { getLocalModulesPath, getTextEditorPath } from "./terminal";
+export * from "./userInteraction";
 
-export { match, additional, policyNotFound } from "./userInteraction";
+export * from "./showResult";
 
-export { showResult } from "./showResult";
+export * from "./checkMissingPolicies";
+
+export * from "./filterProjectContent";

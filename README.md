@@ -38,6 +38,10 @@ erase node_path.txt
 
         pnpm config set local_packages_folder YOUR_PATH_TO_PROJECTS_FOLDER
 
+3. Use `pnpm config` to set `text_editor` to specify the path to your text editor, to display the difference in file contents:
+
+        pnpm config set text_editor YOUR_PATH_TO_TEXT_EDITOR
+
 # Usage
 
 ## Defining a policy
@@ -50,8 +54,9 @@ erase node_path.txt
 
    ```javascript
    module.exports.policy = "POLICY_NAME";
-   module.exports.defaultOptions = {
-   	// policy options here
+   module.exports.options = {
+    exclude: [] // exclude specified folders and files for projects
+    // policy options here
    }
    ```
 
@@ -71,9 +76,9 @@ erase node_path.txt
 
    ```javascript
    module.exports.policy = "POLICY_NAME";
-   // Optionally add
    module.exports.options = {
-   	// policy options here
+    exclude: [] // ignore specified directories and files during policy enforcement
+    // policy options here
    }
    ```
 

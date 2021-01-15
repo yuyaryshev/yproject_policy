@@ -1,78 +1,52 @@
 import globby from "globby";
 import { join, posix } from "path";
 import { POLICY_DEFINITION_FILENAME, PROJECT_POLICY_CONFIG_FILENAME } from "../constant";
-import { PackagesCollection } from "../types";
+import { PolicyData, ProjectData } from "../types";
 import { readDirRecursive } from "./readDirRecursive";
 import { readPolicy } from "./readPolicy";
 import { readProject } from "./readProject";
-import chalk from "chalk";
 
-type scanDirFunction = (path: string) => boolean;
-
-export const isProject: scanDirFunction = (path) => {
+export function isProject(path: string): boolean {
     return Boolean(
         globby.sync(PROJECT_POLICY_CONFIG_FILENAME, {
             onlyFiles: true,
             cwd: posix.normalize(path),
         }).length,
     );
-};
+}
 
-export const isPolicy: scanDirFunction = (path) => {
+export function isPolicy(path: string): boolean {
     return Boolean(
         globby.sync(POLICY_DEFINITION_FILENAME, {
             onlyFiles: true,
             cwd: posix.normalize(path),
         }).length,
     );
-};
+}
 
-export function loadPolicies(packagesCollection: PackagesCollection, policiesLocation: string) {
+export function loadPolicies(policiesLocation: string): Map<string, PolicyData> {
+    const policies = new Map<string, PolicyData>();
     readDirRecursive(policiesLocation, (path, dirEntry) => {
-        if (dirEntry.isDirectory()) {
-            const joinPath = join(path, dirEntry.name);
-            if (isPolicy(joinPath)) {
-                const policy = readPolicy(joinPath);
-                packagesCollection.policies.set(policy.policy.policy, policy);
-                return false;
-            }
-            return true;
+        const fullPolicyPath = join(path, dirEntry.name);
+        if (dirEntry.isDirectory() && isPolicy(fullPolicyPath)) {
+            const policy = readPolicy(fullPolicyPath);
+            policies.set(policy.policy.policy, policy);
+            return false;
         }
-        return false;
+        return dirEntry.isDirectory();
     });
+    return policies;
 }
 
-export function loadProjects(packagesCollection: PackagesCollection, dirPath: string) {
+export function loadProjects(dirPath: string): Map<string, ProjectData> {
+    const projects = new Map<string, ProjectData>();
     readDirRecursive(dirPath, (path, dirEntry) => {
-        if (dirEntry.isDirectory()) {
-            const joinPath = join(path, dirEntry.name);
-            if (isProject(joinPath)) {
-                packagesCollection.projects.set(joinPath, readProject(joinPath));
-                return false;
-            }
-            return true;
+        const fullDirPath = join(path, dirEntry.name);
+        if (dirEntry.isDirectory() && isProject(fullDirPath)) {
+            projects.set(fullDirPath, readProject(fullDirPath));
+            return false;
         }
-        return false;
+        return dirEntry.isDirectory();
     });
+    return projects;
 }
-
-export function scanCurrentPath(dirPath: string, packagesCollection: PackagesCollection) {
-    //(isProject(dirPath)?join(dirPath, "../"):dirPath)
-    if (isProject(dirPath)) {
-        packagesCollection.projects.set(dirPath, readProject(dirPath));
-        try {
-            console.log(chalk.red("Trying to find policies at a parent directory"));
-            loadProjects(join(dirPath, "../"), packagesCollection, true);
-        } catch (error) {
-            console.error(error.message);
-        }
-    } else {
-        loadProjects(dirPath, packagesCollection);
-    }
-}
-
-type isCheckLocalModule = (childPath: string, parentPath: string) => boolean;
-
-export const isCheckLocalModule: isCheckLocalModule = (childPath, parentPath) => {
-    return childPath === parentPath || join(childPath, "..") === parentPath;
-};
