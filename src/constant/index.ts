@@ -10,14 +10,8 @@ export const LOCAL_PACKAGES_FOLDER: string = "local_packages_folder";
 
 export const TEXT_EDITOR: string = "text_editor";
 
-export const FILES_NOT_MATCH = {
-    question: "Files do not match. What are we gonna do?",
-    answers: ["Replace", "Skip", "Compare"],
-};
+export const FILES_NOT_MATCH = "Files do not match. What are we gonna do?";
 
-export const ADDITIONAL_FILES = {
-    question: "Files do not match. What are we gonna do?",
-    answers: ["Replace", "Skip"],
-};
+export const ADDITIONAL_FILES = "Additional files found. What are we gonna do?";
 
 export * from "./dicrionary";

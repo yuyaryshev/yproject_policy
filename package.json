@@ -88,6 +88,7 @@
     "execa": "^5.0.0",
     "globby": "^11.0.2",
     "inquirer": "^7.3.3",
+    "inquirer-table-prompt": "^0.2.1",
     "slash": "^3.0.0"
   }
 }
