@@ -11,15 +11,13 @@ export async function showTable(rowsIn: Array<string>, columnsIn: Array<string>,
         })
     }
     let rowsPush: Array<{name: string, value: number}> = []
-    let count = 0
-    for (let row of rowsIn){
+    for (let i = 0; rowsIn[i] != undefined; i++){
         rowsPush.push({
-            name: row,
-            value: count,
+            name: rowsIn[i],
+            value: i,
         })
-        count++
     }
-    const answers = (
+    return (
     await inquirer
         .prompt([
             {
@@ -29,14 +27,14 @@ export async function showTable(rowsIn: Array<string>, columnsIn: Array<string>,
                 columns: columnsPush,
                 rows: rowsPush,
             }
-        ])).answers;
-    let answersToReturn: Array<string> = []
-    for (let ans of answers){
-        if (ans != undefined){
-            answersToReturn.push(ans)
-        } else {
-            answersToReturn.push("none")
-        }
+        ])
+    ).answers.map(replaceUndefinedAnswer)
+}
+
+function replaceUndefinedAnswer(answer: string){
+    if (answer != undefined){
+        return answer
+    } else {
+        return "none"
     }
-    return answersToReturn
 }
