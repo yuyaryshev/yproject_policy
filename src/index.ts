@@ -28,12 +28,12 @@ module.exports.run = async () => {
 
         const currentPath: string = checkAllLocalProject ? localModulesPath : process.cwd();
 
-        packagesCollection.policies = new Map([...loadPolicies(localModulesPath)]);
+        packagesCollection.policies = loadPolicies(localModulesPath);
 
         if (isProject(currentPath)) {
             packagesCollection.projects.set(currentPath, readProject(currentPath));
         } else {
-            packagesCollection.projects = new Map([...loadProjects(localModulesPath)]);
+            packagesCollection.projects = loadProjects(localModulesPath);
         }
 
         const missingPolicies = checkMissingPolicies(packagesCollection);
@@ -46,10 +46,7 @@ module.exports.run = async () => {
             process.exit(1);
         }
 
-        //TODO: show funded project & policies
         showResult(packagesCollection);
-        //TODO: реализовать и вызвать showPackagesCollections(packagesCollection)
-        //TODO: реализовать и вывести шаблонны опросник на запуск применения политик
 
         for (let projectData of packagesCollection.projects.values()) {
             const policy: PolicyData = packagesCollection.policies.get(projectData.policyConf.policy) as PolicyData;

@@ -1,6 +1,6 @@
 import inquirer from "inquirer";
 
-export async function showQuestion(Question: { question: string; answers: Array<string> }, AdditionalMessage = "") {
+export async function showQuestion(Question: { question: string; answers: Array<string> }, AdditionalMessage = ""): Promise<string> {
     return (
         await inquirer.prompt([
             {
