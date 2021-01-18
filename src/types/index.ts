@@ -8,12 +8,6 @@ export * from "./project";
 
 export type ReadDirCallback = (path: string, dirEntry: Dirent) => true | false | undefined | void;
 
-export type Match = () => Promise<{ match: string }>;
-
-export type Additional = (path?: string | null) => Promise<{ additional: string }>;
-
-export type PolicyNotFound = () => Promise<{ policyNotFound: string }>;
-
 export type Filter = string;
 
 export type GenFilesMap = Map<string, PolicyFileGenerator>;
