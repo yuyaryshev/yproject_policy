@@ -1,6 +1,13 @@
 import { FileMap, PolicyData, ProjectData } from "../types";
 import { basename, dirname, join } from "path";
-import { genPolicyFiles, openFileDiffFromTextEditor, removeFileSync, showTable, writeFileSyncWithDir } from "../helpers";
+import {
+    filterExcludeFilesFromPolicy,
+    genPolicyFiles,
+    openFileDiffFromTextEditor,
+    removeFileSync,
+    showTable,
+    writeFileSyncWithDir,
+} from "../helpers";
 import {
     getErrorMissingPolicyMessage,
     getStartCheckProjectMessage,
@@ -14,11 +21,13 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
     const {
         location: projectDir,
         files: projectFiles,
-        policyConf: { policy: policyName },
+        policyConf: { policy: policyName, options: projectOptions },
     } = projectData;
     const policy = exceptPolicy(policies, policyName, getErrorMissingPolicyMessage(policyName, projectData.location));
-    const policyFiles: FileMap = new Map([...genPolicyFiles(policy, projectData), ...policy.files]);
-    //TODO: фильтровать policyFiles по паттерну из проекта чтобы убрать багу с перезаписью
+    const policyFiles: FileMap = filterExcludeFilesFromPolicy(
+        new Map([...policy.files, ...genPolicyFiles(policy, projectData)]),
+        projectOptions?.exclude ?? [],
+    );
     console.log(getStartCheckProjectMessage(policy.policy.policy, projectData.location));
 
     const coincidenceFiles: Array<string> = [];

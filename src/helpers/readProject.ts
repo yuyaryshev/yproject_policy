@@ -1,7 +1,7 @@
 import { join, posix } from "path";
 import fs from "fs";
 import { FileMap, FilterCollection, PolicyDefinition, ProjectData } from "src/types";
-import { filterProject } from "../helpers";
+import { filterFiles } from "../helpers";
 import { PACKAGE_JSON, PROJECT_POLICY_CONFIG_FILENAME } from "../constant";
 
 export function readProject(projectDir: string): ProjectData {
@@ -21,7 +21,7 @@ export function readProject(projectDir: string): ProjectData {
 function getProjectFiles(path: string, excludePatternCollection: FilterCollection): FileMap {
     const result: FileMap = new Map();
 
-    for (let relPath of filterProject(posix.normalize(path), excludePatternCollection)) {
+    for (let relPath of filterFiles(posix.normalize(path), undefined, excludePatternCollection)) {
         result.set(relPath, fs.readFileSync(join(path, relPath)).toString());
     }
 
