@@ -1,6 +1,5 @@
 import { Dirent } from "fs";
-import { PolicyData, PolicyFileGenerator } from "./policy";
-import { ProjectData } from "./project";
+import { PolicyFileGenerator } from "./policy";
 
 export * from "./policy";
 
@@ -16,7 +15,3 @@ export type FileMap = Map<string, string>;
 
 export type FilterCollection = Array<Filter>;
 
-export type PackagesCollection = {
-    policies: Map<string, PolicyData>;
-    projects: Map<string, ProjectData>;
-};

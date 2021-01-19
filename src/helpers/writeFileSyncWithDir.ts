@@ -1,5 +1,6 @@
 import { dirname } from "path";
 import fs from "fs";
+import { getCreateFileMessage } from "../constant";
 
 export function writeFileSyncWithDir(path: string, content: string, encoding: BufferEncoding | undefined = "utf-8"): boolean {
     const dir = dirname(path);
@@ -7,7 +8,9 @@ export function writeFileSyncWithDir(path: string, content: string, encoding: Bu
         fs.mkdirSync(dir, { recursive: true });
     }
     fs.writeFileSync(path, content, { encoding });
-    return fs.existsSync(path);
+    const result = fs.existsSync(path);
+    if (result) console.log(getCreateFileMessage(path));
+    return result;
 }
 
 export function removeFileSync(path: string): boolean {

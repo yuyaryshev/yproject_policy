@@ -1,5 +1,5 @@
 import { FilterCollection } from "../types";
-import { PACKAGE_JSON, POLICY_DEFINITION_FILENAME, PROJECT_POLICY_CONFIG_FILENAME } from "../constant";
+import { PACKAGE_JSON, POLICY_DEFINITION_FILENAME, PROJECT_POLICY_CONFIG_FILENAME } from "./consts";
 
 export const genFileFilter: FilterCollection = ["{.*,**}*.gen.cjs"];
 

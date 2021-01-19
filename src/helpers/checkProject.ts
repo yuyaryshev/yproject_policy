@@ -1,12 +1,25 @@
 import { FileMap, PolicyData, ProjectData } from "../types";
 import { basename, dirname, join } from "path";
-import { genPolicyFiles, writeFileSyncWithDir, openFileDiffFromTextEditor, removeFileSync, showQuestion } from "../helpers";
-import { POLICY_EXPECTS_FILE_PREFIX, FILES_NOT_MATCH, ADDITIONAL_FILES } from "../constant";
-import chalk from "chalk";
+import { genPolicyFiles, openFileDiffFromTextEditor, removeFileSync, showQuestion, writeFileSyncWithDir } from "../helpers";
+import {
+    ADDITIONAL_FILES,
+    FILES_NOT_MATCH,
+    getErrorMissingPolicyMessage,
+    getFindDiffFileMessage,
+    getFindExtraFileMessage,
+    getStartCheckProjectMessage,
+    POLICY_EXPECTS_FILE_PREFIX,
+} from "../constant";
 
-export async function checkPolicy(policyData: PolicyData, projectData: ProjectData): Promise<void> {
-    const { location: projectDir, files: projectFiles } = projectData;
-    const policyFiles: FileMap = new Map([...genPolicyFiles(policyData, projectData), ...policyData.files]);
+export async function checkProject(policies: Map<string, PolicyData>, projectData: ProjectData): Promise<void> {
+    const {
+        location: projectDir,
+        files: projectFiles,
+        policyConf: { policy: policyName },
+    } = projectData;
+    const policy = exceptPolicy(policies, policyName, getErrorMissingPolicyMessage(policyName, projectData.location));
+    const policyFiles: FileMap = new Map([...genPolicyFiles(policy, projectData), ...policy.files]);
+    console.log(getStartCheckProjectMessage(policy.policy.policy, projectData.location));
 
     for (let [relPath, content] of policyFiles) {
         if (projectFiles.has(relPath)) {
@@ -16,7 +29,7 @@ export async function checkPolicy(policyData: PolicyData, projectData: ProjectDa
 
     for (let path of projectFiles.keys()) {
         if (!policyFiles.has(path)) {
-            console.log("FIND EXTRA FILE IN PROJECT: ", path);
+            console.log(getFindExtraFileMessage(path));
             let exit = false;
             while (!exit) {
                 const mat = await showQuestion(ADDITIONAL_FILES, path);
@@ -37,11 +50,9 @@ export async function checkPolicy(policyData: PolicyData, projectData: ProjectDa
 }
 
 export async function showFileDiff(path: string, content: string): Promise<void> {
-    console.log("FIND DIFF: ", path);
+    console.log(getFindDiffFileMessage(path));
     const expectsFilePath = join(dirname(path), `${POLICY_EXPECTS_FILE_PREFIX}${basename(path)}`);
     writeFileSyncWithDir(expectsFilePath, content);
-    console.log(chalk.red("CREATED FILE: ", expectsFilePath));
-
     let exit = false;
     while (!exit) {
         const mat = await showQuestion(FILES_NOT_MATCH);
@@ -62,4 +73,13 @@ export async function showFileDiff(path: string, content: string): Promise<void>
                 exit = true;
         }
     }
+}
+
+function exceptPolicy(policies: Map<string, PolicyData>, policyName: string, errorMessage: string) {
+    const policy = policies.get(policyName);
+    if (!policy) {
+        console.error(errorMessage);
+        process.exit(1);
+    }
+    return policy;
 }
