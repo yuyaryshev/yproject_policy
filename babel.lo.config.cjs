@@ -1,5 +1,5 @@
-let fs = require('fs');
-let tsconf = eval('(()=>(' + fs.readFileSync('tsconfig.json', 'utf-8') + '))()');
+let fs = require("fs");
+let tsconf = eval("(()=>(" + fs.readFileSync("tsconfig.json", "utf-8") + "))()");
 
 let aliases = {};
 for (let k in tsconf.compilerOptions.paths) {
@@ -9,34 +9,36 @@ for (let k in tsconf.compilerOptions.paths) {
 
 let DEV_SETTINGS = {};
 try {
-    DEV_SETTINGS = require('./DEV_SETTINGS.cjs');
+    DEV_SETTINGS = require("./DEV_SETTINGS.cjs");
 } catch (e) {
 //    console.trace(`DEV_SETTINGS not loaded`, e.stack);
 }
-const {DEV_BYPASS_AUTH} = DEV_SETTINGS;
+const { DEV_BYPASS_AUTH } = DEV_SETTINGS;
 
 module.exports = {
     presets: [],
     plugins: [
         [
-            'inline-replace-variables',
+            "inline-replace-variables",
             {
                 DEV_BYPASS_AUTH: DEV_BYPASS_AUTH,
             },
         ],
-        '@babel/transform-typescript',
-        ['@babel/plugin-proposal-decorators', {legacy: true}],
-
-        '@babel/proposal-optional-chaining',
-        '@babel/proposal-class-properties',
-        '@babel/proposal-object-rest-spread',
+        "@babel/transform-typescript",
         [
-            'module-resolver',
+            "@babel/plugin-proposal-decorators",
+            { legacy: true },
+        ],
+        "@babel/proposal-optional-chaining",
+        "@babel/proposal-class-properties",
+        "@babel/proposal-object-rest-spread",
+        [
+            "module-resolver",
             {
-                root: ['./'],
+                root: ["./"],
                 alias: aliases,
             },
         ],
-        '@babel/transform-modules-commonjs',
+        "@babel/transform-modules-commonjs",
     ],
 };
