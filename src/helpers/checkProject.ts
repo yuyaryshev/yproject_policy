@@ -1,17 +1,12 @@
 import { FileMap, PolicyData, ProjectData } from "../types";
 import { basename, dirname, join } from "path";
+import { genPolicyFiles, openFileDiffFromTextEditor, removeFileSync, showTable, writeFileSyncWithDir } from "../helpers";
 import {
-    genPolicyFiles,
-    openFileDiffFromTextEditor,
-    removeFileSync,
-    writeFileSyncWithDir,
-    showTable,
-} from "../helpers";
-import {
-    ADDITIONAL_FILES,
-    FILES_NOT_MATCH,
     getErrorMissingPolicyMessage,
     getStartCheckProjectMessage,
+    INQUIRER_CHOICES,
+    inquirerAdditionalFilesConfig,
+    inquirerFilesNotMatchConfig,
     POLICY_EXPECTS_FILE_PREFIX,
 } from "../constant";
 
@@ -23,42 +18,59 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
     } = projectData;
     const policy = exceptPolicy(policies, policyName, getErrorMissingPolicyMessage(policyName, projectData.location));
     const policyFiles: FileMap = new Map([...genPolicyFiles(policy, projectData), ...policy.files]);
+    //TODO: фильтровать policyFiles по паттерну из проекта чтобы убрать багу с перезаписью
     console.log(getStartCheckProjectMessage(policy.policy.policy, projectData.location));
 
-    let coincidence: Array<string> = [];
-    for (let [relPath, content] of policyFiles) {
+    const coincidenceFiles: Array<string> = [];
+    const fundedExtraFiles = [...projectFiles.keys()].filter((p) => !policyFiles.has(p));
+
+    for (let [relPath, content] of policyFiles.entries()) {
         if (projectFiles.has(relPath)) {
-            if (projectFiles.get(relPath) !== content) {
-                coincidence.push(relPath);
-            }
-        } else writeFileSyncWithDir(join(projectDir, relPath), content);
+            if (projectFiles.get(relPath) !== content) coincidenceFiles.push(relPath);
+        } else {
+            writeFileSyncWithDir(join(projectDir, relPath), content);
+        }
     }
-    const answersNotMatch = await showTable(coincidence, ["compare", "replace", "skip"], FILES_NOT_MATCH);
-    await handleNotMatch(answersNotMatch, coincidence, policyFiles);
 
-    const pathList = [...projectFiles.keys()].filter(p => !policyFiles.has(p));
-    const answersToAdditionalFiles = await showTable(pathList, ["delete", "skip"], ADDITIONAL_FILES);
-    await handleAddFiles(answersToAdditionalFiles, pathList);
-}
+    if (coincidenceFiles.length) {
+        for (let [relPath, choice] of await showTable(inquirerFilesNotMatchConfig, coincidenceFiles)) {
+            // @ts-ignore
+            await executeSelectedAction(choice, join(projectDir, relPath), policyFiles.get(relPath));
+        }
+    }
 
-
-async function handleAddFiles(answers: Array<string>, pathList: Array<string>) {
-    for (let i = 0; answers[i] != undefined; i++) {
-        if (answers[i] === "delete") {
-            removeFileSync(pathList[i]);
+    if (fundedExtraFiles.length) {
+        for (let [relPath, choice] of await showTable(inquirerAdditionalFilesConfig, fundedExtraFiles)) {
+            // @ts-ignore
+            await executeSelectedAction(choice, join(projectDir, relPath), policyFiles.get(relPath));
         }
     }
 }
 
-async function handleNotMatch(answers: Array<string>, pathList: Array<string>, policyFiles: FileMap) {
-    for (let i = 0; answers[i] != undefined; i++) {
-        if (answers[i] === "compare") {
-            const expectsFilePath = join(dirname(pathList[i]), `${POLICY_EXPECTS_FILE_PREFIX}${basename(pathList[i])}`);
-            await openFileDiffFromTextEditor(expectsFilePath, pathList[i]);
-        } else if (answers[i] === "replace") {
-            writeFileSyncWithDir(pathList[i], policyFiles.get(pathList[i]) || "Content not found");
-        }
+async function executeSelectedAction(choice: string, absPath: string, fileContent: string) {
+    const {
+        replace: { value: replace },
+        compare: { value: compare },
+        remove: { value: remove },
+    } = INQUIRER_CHOICES;
+    switch (choice) {
+        case replace:
+            writeFileSyncWithDir(absPath, fileContent);
+            break;
+        case compare:
+            await showFileDiff(absPath, fileContent);
+            break;
+        case remove:
+            removeFileSync(absPath);
+            break;
+        default:
     }
+}
+
+export async function showFileDiff(path: string, content: string): Promise<void> {
+    const expectsFilePath = join(dirname(path), `${POLICY_EXPECTS_FILE_PREFIX}${basename(path)}`);
+    writeFileSyncWithDir(expectsFilePath, content);
+    await openFileDiffFromTextEditor(expectsFilePath, path);
 }
 
 function exceptPolicy(policies: Map<string, PolicyData>, policyName: string, errorMessage: string) {
