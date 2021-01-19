@@ -1,7 +1,7 @@
 import { FileMap, PolicyData, PolicyOptions, ProjectData } from "../types";
 
 export function genPolicyFiles(policyData: PolicyData, projectData: ProjectData): FileMap {
-    const generateFiles: FileMap = new Map<string, string>();
+    const generateFiles = new Map();
     const policyOptions: PolicyOptions | undefined = projectData.policyConf?.options;
 
     for (let [relPath, { generate }] of policyData.genFiles.entries()) {

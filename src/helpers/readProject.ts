@@ -2,7 +2,7 @@ import { join, posix } from "path";
 import fs from "fs";
 import { FileMap, FilterCollection, PolicyDefinition, ProjectData } from "src/types";
 import { filterProject } from "../helpers";
-import { PROJECT_POLICY_CONFIG_FILENAME, PACKAGE_JSON } from "../constant";
+import { PACKAGE_JSON, PROJECT_POLICY_CONFIG_FILENAME } from "../constant";
 
 export function readProject(projectDir: string): ProjectData {
     const policyConf: PolicyDefinition = require(join(projectDir, PROJECT_POLICY_CONFIG_FILENAME));

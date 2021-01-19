@@ -1,8 +1,7 @@
 import { join, posix } from "path";
-import { FileMap, GenFilesMap, FilterCollection, PolicyData, PolicyDefinition } from "src/types";
-import { POLICY_DEFINITION_FILENAME } from "../constant";
-import { filterPolicy } from "./index";
-import { genFileFilter, policyFileFilter } from "../filter";
+import { FileMap, FilterCollection, GenFilesMap, PolicyData, PolicyDefinition } from "src/types";
+import { genFileFilter, POLICY_DEFINITION_FILENAME, policyFileFilter } from "../constant";
+import { filterPolicy } from "../helpers";
 import fs from "fs";
 
 export function readPolicy(projectDir: string): PolicyData {

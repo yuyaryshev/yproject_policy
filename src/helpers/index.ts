@@ -4,7 +4,7 @@ export * from "./readPolicy";
 
 export * from "./genPolicyFiles";
 
-export * from "./checkPolicy";
+export * from "./checkProject";
 
 export * from "./writeFileSyncWithDir";
 
@@ -15,9 +15,5 @@ export * from "./scanDir";
 export * from "./terminal";
 
 export * from "./userInteraction";
-
-export * from "./showResult";
-
-export * from "./checkMissingPolicies";
 
 export * from "./filterProjectContent";
