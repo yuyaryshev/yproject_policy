@@ -1,21 +1,26 @@
 import globby from "globby";
-import { FilterCollection } from "../types";
-import { defaultPolicyFilter, defaultProjectFilter } from "../constant";
+import { FileMap, Filter, FilterCollection } from "../types";
+import { defaultFilterCollection } from "../constant";
+import micromatch from "micromatch";
+import arrayUnion from "array-union";
+import dirGlob from "dir-glob";
 
-export function makePatternIgnore(patternCollection: FilterCollection): FilterCollection {
-    return patternCollection.map((pattern) => (pattern.charAt(0) !== "!" ? `!${pattern}` : pattern));
-}
-
-export function filterPolicy(posixPath: string, includeFilters: FilterCollection, excludeFilters: FilterCollection = []): Array<string> {
-    return globby.sync([...includeFilters, ...defaultPolicyFilter, ...makePatternIgnore(excludeFilters)], {
+export function filterFiles(posixPath: string, includeFilters: FilterCollection | Filter = "", excludeFilters: FilterCollection = []): Array<string> {
+    return globby.sync(includeFilters, {
         onlyFiles: true,
         cwd: posixPath,
+        ignore: arrayUnion(defaultFilterCollection, excludeFilters),
+        dot: true,
     });
 }
 
-export function filterProject(posixPath: string, excludeFilters: FilterCollection = []): Array<string> {
-    return globby.sync([...defaultProjectFilter, ...makePatternIgnore(excludeFilters)], {
-        onlyFiles: true,
-        cwd: posixPath,
-    });
+export function filterExcludeFilesFromPolicy(policyFiles: FileMap, excludeFilters: FilterCollection = []): FileMap {
+    if (!excludeFilters.length) return policyFiles;
+    const result = new Map();
+    micromatch([...policyFiles.keys()], "**", {
+        dot: true,
+        ignore: dirGlob.sync(excludeFilters),
+    }).forEach((path) => result.set(path, policyFiles.get(path)));
+
+    return result;
 }
