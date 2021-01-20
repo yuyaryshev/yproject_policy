@@ -6,7 +6,7 @@ export function getErrorMissingPolicyMessage(policyName: string, projectDir: str
 }
 
 export function getStartCheckProjectMessage(policyName: string, projectDir: string) {
-    return chalk.blue(`CHECK POLICY (${policyName}) FOR PROJECT (${projectDir})`);
+    return chalk.bgBlue.white(`Start project review (${projectDir}) for compliance with (${policyName}) policy...`);
 }
 
 export function getCommandOptionAllDescription() {
@@ -18,7 +18,11 @@ export function getMissingLocalPackagesError() {
 }
 
 export function getFinishMessage() {
-    return chalk.green("FINISH");
+    return chalk.green("Work yproject_policy completed.");
+}
+
+export function getFinishCheckProjectMessage() {
+    return chalk.bgGreen.black(`Project review policy completed.`);
 }
 
 export function getFilesNotMatchMessage() {

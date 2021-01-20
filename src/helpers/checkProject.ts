@@ -10,6 +10,7 @@ import {
 } from "../helpers";
 import {
     getErrorMissingPolicyMessage,
+    getFinishCheckProjectMessage,
     getStartCheckProjectMessage,
     INQUIRER_CHOICES,
     inquirerAdditionalFilesConfig,
@@ -54,6 +55,7 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
             await executeSelectedAction(choice, join(projectDir, relPath), policyFiles.get(relPath));
         }
     }
+    console.log(getFinishCheckProjectMessage());
 }
 
 async function executeSelectedAction(choice: string, absPath: string, fileContent: string) {
