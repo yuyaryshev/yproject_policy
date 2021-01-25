@@ -38,6 +38,10 @@ erase node_path.txt
 
         pnpm config set local_packages_folder YOUR_PATH_TO_PROJECTS_FOLDER
 
+3. Use `pnpm config` to set `text_editor` to specify the path to your text editor, to display the difference in file contents:
+
+        pnpm config set text_editor YOUR_PATH_TO_TEXT_EDITOR
+
 # Usage
 
 ## Defining a policy
@@ -50,8 +54,9 @@ erase node_path.txt
 
    ```javascript
    module.exports.policy = "POLICY_NAME";
-   module.exports.defaultOptions = {
-   	// policy options here
+   module.exports.options = {
+    exclude: [] // exclude specified folders and files from projects
+    // policy options here
    }
    ```
 
@@ -71,9 +76,9 @@ erase node_path.txt
 
    ```javascript
    module.exports.policy = "POLICY_NAME";
-   // Optionally add
    module.exports.options = {
-   	// policy options here
+    exclude: [] // ignore specified directories and files during policy enforcement
+    // policy options here
    }
    ```
 
@@ -89,54 +94,4 @@ If you didn't liked **yproject_policy** uninstallation process is quite simple.
 
 # Functions (Developer guide)
 
-* 
-
-
-
-# TODOs and notes
-
-* Реализовывать в папке **src**, она компилируется в папку **lib** при помощи запуска в отдельной консоли **npm run watch:src**
-* В качестве пакетов использовать
-  * Dependencies от пакета **npm-check**
-  * Наиболее вероятно потребуются:
-    * readDirRecursive - см в папке
-    * https://www.npmjs.com/package/inquirer
-    * https://www.npmjs.com/package/globby
-    * https://www.npmjs.com/package/chalk
-* FileMap - relativePath, content
-* readPolicy(projectDir) -> PolicyData
-  * Считать  `yproject_policy_definition.cjs`  в переменную
-  * Просканировать существующие файлы, собрать их в массив
-    * Исключить из сканирования особые файлы yproject_policy
-      * yproject_policy_definition.cjs
-    * .gen.js сложить в отдельный массив
-    * Учесть ограничения в yproject_policy_definition.cjs
-  * Создать map(relativePath, content)
-* readProject(projectDir) -> ProjectData
-  * Просканировать существующие файлы, собрать в массив
-    * Исключить файлы YPOLICY_EXPECTS_*
-    * Исключить из сканирования особые файлы yproject_policy
-      * yproject_policy.cjs
-    * Учесть ограничения в yproject_policy_definition.cjs
-    *  `yproject_policy.cjs`  
-  * Создать map(relativePath, content)
-* genPolicyFiles(policyData, projectData): FileMap 
-  * По политике сгенерировать содержимое .gen.js файлов.  map(relativePath, content)
-* checkPolicy(policyData, projectData)
-  * Собрать полный FileMap файлов по политике
-  * Пройти по FileMap политики и проверить что в проекте такие файлы есть и их содержимое равно политике
-    * **ЕСЛИ НЕ РАВНО?**
-      * Записать рядом файл с префиксом YPOLICY_EXPECTS_*
-      * Предложить действия на выбор
-        * Пропустить - вывести сообщение и ничего не делать
-        * Заменить - перезаписать файл
-        * Сравнить - открыть Meld
-  * Проверить, что в FileMap проекта нет лишних файлов
-    * **ЕСЛИ ЕСТЬ ЛИШНИЕ ФАЙЛЫ?**
-    * Предложить действия на выбор
-      * Пропустить
-      * Удалить
-
-
-
-
+*

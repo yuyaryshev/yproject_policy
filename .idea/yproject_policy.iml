@@ -5,5 +5,8 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="yproject_policy_porjects" />
+    <orderEntry type="module" module-name="yproject_policy_projects" />
+    <orderEntry type="module" module-name="test" />
   </component>
 </module>

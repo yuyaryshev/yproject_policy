@@ -108,3 +108,5 @@ dist
 
 # lib folder - it'll be compiled
 lib
+/package-lock.json
+/pnpm-lock.yaml
