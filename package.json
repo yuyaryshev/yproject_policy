@@ -22,9 +22,10 @@
     "Unlicense.txt"
   ],
   "scripts": {
-    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch:src": "rmdir lib\\src /s /q & babel src --config-file ./babel.lo.config.cjs --out-dir lib\\src --extensions \".ts\" --source-maps inline -w"
+	"republish": "npm run build && npx version-select && npx genversion --es6 --semi version.js && npm publish && npm i -g yproject_policy@latest && yproject_policy --version",
+    "start": "node index.js"	
   },
   "repository": {
     "type": "git",

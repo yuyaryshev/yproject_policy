@@ -1,1 +1,1 @@
-npm publish && npm uninstall -g yproject_policy && npm install -g yproject_policy@latest && yproject_policy
+npm run republish
