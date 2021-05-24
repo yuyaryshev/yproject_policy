@@ -38,7 +38,7 @@ export function getCreateFileMessage(path: string) {
 }
 
 export function getMissingTextEditorError() {
-    return chalk.red("CODE00000000 Text editor not found. Please use 'npm config set ${TEXT_EDITOR}' to define projects folder.");
+    return chalk.red("CODE00000000 Text editor not found. Please use 'npm config set ${DIFF_EDITOR}' to define projects folder.");
 }
 
 export function getRunTextEditorMessage() {

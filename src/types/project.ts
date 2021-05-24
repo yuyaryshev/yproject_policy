@@ -1,4 +1,5 @@
-import { FileMap, FilterCollection } from "./index";
+import { FilterCollection } from "./index";
+import {FileMap} from "./FileMap";
 
 export type ProjectOptions = {
     exclude?: FilterCollection;

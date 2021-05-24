@@ -2,7 +2,7 @@ import { checkProject, getLocalModulesPath, isProject, loadPolicies, loadProject
 import { program } from "commander";
 import { getCommandOptionAllDescription, getFinishMessage } from "./constant";
 
-module.exports.run = async () => {
+export async function run() {
     try {
         program.option("-a --check-all-local-project", getCommandOptionAllDescription());
         program.parse(process.argv);
@@ -26,4 +26,4 @@ module.exports.run = async () => {
         console.error(error.message);
         process.exit(1);
     }
-};
+}

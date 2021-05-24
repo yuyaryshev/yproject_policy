@@ -1,4 +1,5 @@
-import { FileMap, FilterCollection, GenFilesMap } from "./index";
+import {FilterCollection} from "./index";
+import {FileMap, GenFilesMap} from "./FileMap";
 
 export type PolicyOptions = {
     exclude?: FilterCollection;
@@ -12,10 +13,8 @@ export type PolicyDefinition = {
 
 export type PolicyData = {
     policy: PolicyDefinition;
+    policyAbsPath: string;
     files: FileMap;
     genFiles: GenFilesMap;
 };
 
-export type PolicyFileGenerator = {
-    generate: (packageJson: object, policyOptions: PolicyOptions) => string;
-};

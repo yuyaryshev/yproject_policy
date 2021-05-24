@@ -10,6 +10,7 @@ export const defaultFilterCollection: FilterCollection = [
     "*-lock.json",
     "*.lock",
     "*.cache",
+    "*-lock.yaml",
     PACKAGE_JSON,
     PROJECT_POLICY_CONFIG_FILENAME,
     POLICY_DEFINITION_FILENAME,

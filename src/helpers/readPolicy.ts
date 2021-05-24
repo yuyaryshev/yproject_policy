@@ -1,8 +1,9 @@
-import { join, posix } from "path";
-import { FileMap, FilterCollection, GenFilesMap, PolicyData, PolicyDefinition } from "src/types";
+import { join, resolve, posix } from "path";
+import { FilterCollection, PolicyData, PolicyDefinition } from "src/types";
 import { genFileFilter, POLICY_DEFINITION_FILENAME } from "../constant";
 import fs from "fs";
 import { filterFiles } from "./filterProjectContent";
+import {FileMap, GenFilesMap} from "../types/FileMap";
 
 export function readPolicy(projectDir: string): PolicyData {
     const policy: PolicyDefinition = require(join(projectDir, POLICY_DEFINITION_FILENAME));
@@ -11,6 +12,7 @@ export function readPolicy(projectDir: string): PolicyData {
 
     return {
         policy,
+        policyAbsPath: resolve(projectDir),
         genFiles,
         files,
     };
@@ -18,7 +20,7 @@ export function readPolicy(projectDir: string): PolicyData {
 
 function getGenPolicyFiles(path: string, excludePatternCollection: FilterCollection): GenFilesMap {
     const result = new Map();
-    for (let relPath of filterFiles(posix.normalize(path), genFileFilter, excludePatternCollection)) {
+    for (let relPath of filterFiles(path, genFileFilter, excludePatternCollection)) {
         result.set(relPath, require(join(path, relPath)));
     }
     return result;
@@ -27,7 +29,7 @@ function getGenPolicyFiles(path: string, excludePatternCollection: FilterCollect
 function getPolicyFiles(path: string, excludePatternCollection: FilterCollection): FileMap {
     const result = new Map();
 
-    for (let relPath of filterFiles(posix.normalize(path), undefined, [genFileFilter, ...excludePatternCollection])) {
+    for (let relPath of filterFiles(path, undefined, [genFileFilter, ...excludePatternCollection])) {
         result.set(relPath, fs.readFileSync(join(path, relPath)).toString());
     }
     return result;

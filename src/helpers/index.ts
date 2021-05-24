@@ -1,5 +1,3 @@
-export * from "./readDirRecursive";
-
 export * from "./readPolicy";
 
 export * from "./genPolicyFiles";

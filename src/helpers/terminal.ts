@@ -1,5 +1,5 @@
 import execa from "execa";
-import { getMissingLocalPackagesError, getMissingTextEditorError, getRunTextEditorMessage, LOCAL_PACKAGES_FOLDER, TEXT_EDITOR } from "../constant";
+import { getMissingLocalPackagesError, getMissingTextEditorError, getRunTextEditorMessage, LOCAL_PACKAGES_FOLDER, DIFF_EDITOR } from "../constant";
 
 export async function getLocalModulesPath() {
     const { stdout } = await execa("npm config get", [LOCAL_PACKAGES_FOLDER]);
@@ -13,7 +13,7 @@ export async function getLocalModulesPath() {
 }
 
 export async function getTextEditorPath(): Promise<string | undefined> {
-    const { stdout } = await execa("npm config get", [TEXT_EDITOR]);
+    const { stdout } = await execa("npm config get", [DIFF_EDITOR]);
     return stdout !== "undefined" ? stdout : undefined;
 }
 

@@ -1,17 +1,30 @@
-import globby from "globby";
-import { FileMap, Filter, FilterCollection } from "../types";
+// import globby from "globby";
+import { Filter, FilterCollection } from "../types";
 import { defaultFilterCollection } from "../constant";
 import micromatch from "micromatch";
 import arrayUnion from "array-union";
-import dirGlob from "dir-glob";
+import {FileMap} from "../types/FileMap";
+import {join, posix} from "path";
+import {readdirSync} from "fs";
 
-export function filterFiles(posixPath: string, includeFilters: FilterCollection | Filter = "", excludeFilters: FilterCollection = []): Array<string> {
-    return globby.sync(includeFilters, {
-        onlyFiles: true,
-        cwd: posixPath,
-        ignore: arrayUnion(defaultFilterCollection, excludeFilters),
+export function filterFiles(rootPath: string, includeFilters: FilterCollection | Filter = "**", excludeFilters: FilterCollection = []): Array<string> {
+    const dirents = readdirSync(rootPath, { withFileTypes: true });
+    const files = dirents.filter(f => !f.isDirectory()).map(f=> f.name);
+    return micromatch(files, includeFilters, {
         dot: true,
+        ignore: arrayUnion(defaultFilterCollection, excludeFilters),
     });
+
+
+    // const posixPath = posix.normalize(rootPath);
+    // return globby.sync(includeFilters, {
+    //     expandDirectories: false,
+    //     gitignore: false,
+    //     onlyFiles: true,
+    //     cwd: posixPath,
+    //     ignore: arrayUnion(defaultFilterCollection, excludeFilters),
+    //     dot: true,
+    // });
 }
 
 export function filterExcludeFilesFromPolicy(policyFiles: FileMap, excludeFilters: FilterCollection = []): FileMap {
@@ -19,7 +32,7 @@ export function filterExcludeFilesFromPolicy(policyFiles: FileMap, excludeFilter
     const result = new Map();
     micromatch([...policyFiles.keys()], "**", {
         dot: true,
-        ignore: dirGlob.sync(excludeFilters),
+        ignore: excludeFilters,
     }).forEach((path) => result.set(path, policyFiles.get(path)));
 
     return result;
