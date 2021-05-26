@@ -13,7 +13,8 @@ export type ProjectPolicyConfig = {
 
 export type ProjectData = {
     policyConf: ProjectPolicyConfig;
-    files: FileMap;
+    projectFiles: FileMap;
     packageJson: object;
-    location: string;
+    projectDir: string;
+    prevPolicyFiles: Set<string>;
 };

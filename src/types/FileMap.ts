@@ -7,6 +7,13 @@ export type PolicyFileGenerator = {
 export type GenFilesMap = Map<string, PolicyFileGenerator>;
 export type FileMap = Map<string, string>;
 
+export interface FileDiff {
+    projectContent: string;
+    policyContent: string;
+}
+
+export type FileDiffMap = Map<string, FileDiff>;
+
 // export interface VirtualFile {
 //     getContent:() => string;
 // }

@@ -5,6 +5,7 @@ import {
     filterExcludeFilesFromPolicy,
     genPolicyFiles,
     openFileDiffFromTextEditor,
+    readProject,
     removeFileSync,
     showTable,
     writeFileSyncWithDir,
@@ -17,58 +18,105 @@ import {
     inquirerAdditionalFilesConfig,
     inquirerFilesNotMatchConfig,
     POLICY_EXPECTS_FILE_PREFIX,
+    PROJECT_POLICY_PREV_CONTENT_FILENAME,
 } from "../constant";
-import { FileMap } from "../types/FileMap";
+import { FileDiffMap, FileMap } from "../types/FileMap";
+import { unlinkSync } from "fs";
 
-export async function checkProject(policies: Map<string, PolicyData>, projectData: ProjectData): Promise<void> {
+export function compareWithPolicy(policies: Map<string, PolicyData>, projectData: ProjectData) {
     const {
-        location: projectDir,
-        files: projectFiles,
+        projectDir,
+        projectFiles,
         policyConf: { policy: policyName, options: projectOptions },
     } = projectData;
-    const policy = exceptPolicy(policies, policyName, getErrorMissingPolicyMessage(policyName, projectData.location));
-
+    const policy = exceptPolicy(policies, policyName, getErrorMissingPolicyMessage(policyName, projectData.projectDir));
     const policyFiles: FileMap = filterExcludeFilesFromPolicy(
         new Map([...policy.files, ...genPolicyFiles(policy, projectData)]),
         projectOptions?.exclude ?? [],
     );
-    console.log(getStartCheckProjectMessage(policy.policy.policy, projectData.location));
 
-    const coincidenceFiles: Array<string> = [];
-    const fundedExtraFiles = [...projectFiles.keys()].filter((p) => !policyFiles.has(p));
+    const projectExtraFiles: FileMap = new Map();
+    for (const [fileName, projectContent] of projectFiles) if (!policyFiles.has(fileName)) projectExtraFiles.set(fileName, projectContent);
 
-    for (let [relPath, content] of policyFiles.entries()) {
-        if (projectFiles.has(relPath)) {
-            if (projectFiles.get(relPath) !== content) coincidenceFiles.push(relPath);
-        } else {
-            writeFileSyncWithDir(join(projectDir, relPath), content);
+    const matchingFiles: FileMap = new Map();
+    const differentFiles: FileDiffMap = new Map();
+    const policyExtraFiles: FileMap = new Map();
+    for (const [fileName, policyContent] of policyFiles) {
+        const projectContent = projectFiles.get(fileName) || "";
+        if (!projectFiles.has(fileName)) policyExtraFiles.set(fileName, policyContent);
+        else {
+            if (policyContent === projectContent) matchingFiles.set(fileName, policyContent);
+            else differentFiles.set(fileName, { projectContent, policyContent });
+        }
+    }
+    return { policy, policyFiles, matchingFiles, differentFiles, projectExtraFiles, policyExtraFiles };
+}
+
+export async function checkProject(policies: Map<string, PolicyData>, projectData: ProjectData): Promise<void> {
+    const { projectDir } = projectData;
+    {
+        const { policy, policyFiles, differentFiles, matchingFiles, projectExtraFiles, policyExtraFiles } = compareWithPolicy(policies, projectData);
+
+        // Add policy files
+        for (const [fileName, policyContent] of policyExtraFiles) {
+            writeFileSyncWithDir(join(projectDir, fileName), policyContent);
+            matchingFiles.set(fileName, policyContent);
+            policyExtraFiles.delete(fileName);
+        }
+
+        // Overwrite unchagned files
+        for (const [fileName, d] of differentFiles)
+            if (projectData.prevPolicyFiles.has(fileName)) {
+                writeFileSyncWithDir(join(projectDir, fileName), d.policyContent);
+                matchingFiles.set(fileName, d.policyContent);
+                differentFiles.delete(fileName);
+            }
+
+        // Delete old policy files
+        for (const [fileName, projectContent] of projectExtraFiles)
+            if (projectData.prevPolicyFiles.has(fileName)) {
+                unlinkSync(join(projectDir, fileName));
+                projectExtraFiles.delete(fileName);
+            }
+
+        // Ask what to do with different files
+        if (differentFiles.size) {
+            for (const [relPath, choice] of await showTable(inquirerFilesNotMatchConfig, [...differentFiles.keys()])) {
+                // @ts-ignore
+                await executeSelectedAction(
+                    choice,
+                    join(projectDir, relPath),
+                    policyFiles.get(relPath)!,
+                    policy.policyAbsPath,
+                    !policy.files.has(relPath),
+                );
+            }
+        }
+
+        // Ask what to do with extra files
+        if (projectExtraFiles.size) {
+            for (const [relPath, choice] of await showTable(inquirerAdditionalFilesConfig, [...projectExtraFiles.keys()])) {
+                // @ts-ignore
+                await executeSelectedAction(
+                    choice,
+                    join(projectDir, relPath),
+                    policyFiles.get(relPath)!,
+                    policy.policyAbsPath,
+                    !policy.files.has(relPath),
+                );
+            }
         }
     }
 
-    if (coincidenceFiles.length) {
-        for (let [relPath, choice] of await showTable(inquirerFilesNotMatchConfig, coincidenceFiles)) {
-            // @ts-ignore
-            await executeSelectedAction(
-                choice,
-                join(projectDir, relPath),
-                policyFiles.get(relPath),
-                policy.policyAbsPath,
-                !policy.files.has(relPath),
-            );
-        }
-    }
+    // Compare all over again and save files matching the policy
+    {
+        Object.assign(projectData, readProject(projectDir));
+        const { policy, policyFiles, matchingFiles } = compareWithPolicy(policies, projectData);
+        const policyPrevMatchedData: any = {};
+        for (const [fileName, projectContent] of matchingFiles) policyPrevMatchedData[fileName] = projectContent;
 
-    if (fundedExtraFiles.length) {
-        for (let [relPath, choice] of await showTable(inquirerAdditionalFilesConfig, fundedExtraFiles)) {
-            // @ts-ignore
-            await executeSelectedAction(
-                choice,
-                join(projectDir, relPath),
-                policyFiles.get(relPath),
-                policy.policyAbsPath,
-                !policy.files.has(relPath),
-            );
-        }
+        const policyPrevMatchedDataStr = JSON.stringify(policyPrevMatchedData, undefined, "    ");
+        writeFileSyncWithDir(join(projectDir, PROJECT_POLICY_PREV_CONTENT_FILENAME), policyPrevMatchedDataStr, "utf-8");
     }
     console.log(getFinishCheckProjectMessage());
 }

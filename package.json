@@ -1,6 +1,6 @@
 {
     "name": "yproject_policy",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Local package manager. A tool to manage your multi-repo.",
     "main": "./bin/index.js",
     "keywords": [
