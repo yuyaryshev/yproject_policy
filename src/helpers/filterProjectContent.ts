@@ -1,11 +1,11 @@
 // import globby from "globby";
-import { Filter, FilterCollection } from "../types";
 import { defaultFilterCollection } from "../constant";
 import micromatch from "micromatch";
 import arrayUnion from "array-union";
 import {FileMap} from "../types/FileMap";
 import {join, posix} from "path";
 import {readdirSync} from "fs";
+import {Filter, FilterCollection} from "../types/other";
 
 export function filterFiles(rootPath: string, includeFilters: FilterCollection | Filter = "**", excludeFilters: FilterCollection = []): Array<string> {
     const dirents = readdirSync(rootPath, { withFileTypes: true });

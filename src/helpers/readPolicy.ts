@@ -1,9 +1,10 @@
 import { join, resolve, posix } from "path";
-import { FilterCollection, PolicyData, PolicyDefinition } from "src/types";
+import { PolicyData, PolicyDefinition } from "src/types";
 import { genFileFilter, POLICY_DEFINITION_FILENAME } from "../constant";
 import fs from "fs";
 import { filterFiles } from "./filterProjectContent";
 import {FileMap, GenFilesMap} from "../types/FileMap";
+import {FilterCollection} from "../types/other";
 
 export function readPolicy(projectDir: string): PolicyData {
     const policy: PolicyDefinition = require(join(projectDir, POLICY_DEFINITION_FILENAME));

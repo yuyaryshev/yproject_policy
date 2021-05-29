@@ -1,5 +1,5 @@
-import {FilterCollection} from "./index";
 import {FileMap, GenFilesMap} from "./FileMap";
+import {FilterCollection} from "./other";
 
 export type PolicyOptions = {
     exclude?: FilterCollection;

@@ -2,7 +2,7 @@ import chalk from "chalk";
 import { LOCAL_PACKAGES_FOLDER } from "./";
 
 export function getErrorMissingPolicyMessage(policyName: string, projectDir: string) {
-    return chalk.red(`CODE00000000 Missing policy (${policyName}) for project (${projectDir}}).`);
+    return chalk.red(`CODE00000283 Missing policy (${policyName}) for project (${projectDir}}).`);
 }
 
 export function getStartCheckProjectMessage(policyName: string, projectDir: string) {
@@ -14,7 +14,7 @@ export function getCommandOptionAllDescription() {
 }
 
 export function getMissingLocalPackagesError() {
-    return chalk.red(`CODE00000000 Please use 'npm config set ${LOCAL_PACKAGES_FOLDER}' to define projects folder.`);
+    return chalk.red(`CODE00000284 Please use 'npm config set ${LOCAL_PACKAGES_FOLDER}' to define projects folder.`);
 }
 
 export function getFinishMessage() {
@@ -38,7 +38,7 @@ export function getCreateFileMessage(path: string) {
 }
 
 export function getMissingTextEditorError() {
-    return chalk.red("CODE00000000 Text editor not found. Please use 'npm config set ${DIFF_EDITOR}' to define projects folder.");
+    return chalk.red("CODE00000285 Text editor not found. Please use 'npm config set ${DIFF_EDITOR}' to define projects folder.");
 }
 
 export function getRunTextEditorMessage() {

@@ -1,10 +1,10 @@
 import { getFilesNotMatchMessage, getFindAdditionalFilesMessage } from "./dictionary";
-import { InquirerTableCell, InquirerTableConfig } from "../types";
+import {InquirerTableCell, InquirerTableConfig} from "../types/other";
 
 export const INQUIRER_CHOICES: { [x: string]: InquirerTableCell } = {
     none: {
         name: "None",
-        value: 0,
+        value: 0 as any as string,
     },
 
     replace: {

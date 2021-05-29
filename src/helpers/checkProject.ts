@@ -122,7 +122,7 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
 }
 
 async function executeSelectedAction(choice: string, absPath: string, fileContent: string, policyAbsPath: string, generated: boolean) {
-    console.log(`CODE00000000 executeSelectedAction ${choice} ${absPath} ${policyAbsPath}`);
+    console.log(`CODE00000286 executeSelectedAction ${choice} ${absPath} ${policyAbsPath}`);
     const {
         replace: { value: replace },
         compare: { value: compare },
