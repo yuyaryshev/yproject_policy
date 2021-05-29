@@ -5,10 +5,9 @@ import {
     filterExcludeFilesFromPolicy,
     genPolicyFiles,
     openFileDiffFromTextEditor,
-    readProject,
-    removeFileSync,
+    readProject,    
     showTable,
-    writeFileSyncWithDir,
+    writeFileSyncIfChanged,
 } from "../helpers";
 import {
     getErrorMissingPolicyMessage,
@@ -59,7 +58,7 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
 
         // Add policy files
         for (const [fileName, policyContent] of policyExtraFiles) {
-            writeFileSyncWithDir(join(projectDir, fileName), policyContent);
+            writeFileSyncIfChanged(join(projectDir, fileName), policyContent);
             matchingFiles.set(fileName, policyContent);
             policyExtraFiles.delete(fileName);
         }
@@ -67,7 +66,7 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
         // Overwrite unchagned files
         for (const [fileName, d] of differentFiles)
             if (projectData.prevPolicyFiles.has(fileName)) {
-                writeFileSyncWithDir(join(projectDir, fileName), d.policyContent);
+                writeFileSyncIfChanged(join(projectDir, fileName), d.policyContent);
                 matchingFiles.set(fileName, d.policyContent);
                 differentFiles.delete(fileName);
             }
@@ -116,7 +115,7 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
         for (const [fileName, projectContent] of matchingFiles) policyPrevMatchedData[fileName] = projectContent;
 
         const policyPrevMatchedDataStr = JSON.stringify(policyPrevMatchedData, undefined, "    ");
-        writeFileSyncWithDir(join(projectDir, PROJECT_POLICY_PREV_CONTENT_FILENAME), policyPrevMatchedDataStr, "utf-8");
+        writeFileSyncIfChanged(join(projectDir, PROJECT_POLICY_PREV_CONTENT_FILENAME), policyPrevMatchedDataStr);
     }
     console.log(getFinishCheckProjectMessage());
 }
@@ -131,17 +130,17 @@ async function executeSelectedAction(choice: string, absPath: string, fileConten
     } = INQUIRER_CHOICES;
     switch (choice) {
         case replace:
-            writeFileSyncWithDir(absPath, fileContent);
+            writeFileSyncIfChanged(absPath, fileContent);
             break;
         case compare:
             if (!generated) await showFileDiffFile(absPath, policyAbsPath);
             else await showFileDiffGen(absPath, fileContent);
             break;
         case remove:
-            removeFileSync(absPath);
+            unlinkSync(absPath);
             break;
         case to_policy:
-            writeFileSyncWithDir(join(policyAbsPath, basename(absPath)), readFileSync(absPath, "utf-8"));
+            writeFileSyncIfChanged(join(policyAbsPath, basename(absPath)), readFileSync(absPath, "utf-8"));
             break;
         default:
     }
@@ -153,7 +152,7 @@ export async function showFileDiffFile(path: string, policyAbsPath: string): Pro
 
 export async function showFileDiffGen(path: string, content: string): Promise<void> {
     const expectsFilePath = join(dirname(path), `${POLICY_EXPECTS_FILE_PREFIX}${basename(path)}`);
-    writeFileSyncWithDir(expectsFilePath, content);
+    writeFileSyncIfChanged(expectsFilePath, content);
     await openFileDiffFromTextEditor(expectsFilePath, path);
 }
 

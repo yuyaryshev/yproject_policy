@@ -5,7 +5,8 @@
     "width": 500,
     "wins": {
 		"webstorm":{"app":true, "cmd":"D:\\ProgsReady\\IntellijIdeaUI\\bin\\idea64.exe"},
-        "watch": { "no_run": false, "cmd":"cls & npm run watch:src"}
+        "watch": { "no_run": false, "cmd":"cls & npm run watch:src"},
+        "validators": {"no_run": false, "cmd":"cls & npm run build:validators"}
     },
     "wins_DISABLED": {
 

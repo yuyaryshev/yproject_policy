@@ -8,5 +8,5 @@ export * from "./readProject.js";
 export * from "./scanDir.js";
 export * from "./terminal.js";
 export * from "./userInteraction.js";
-export * from "./writeFileSyncWithDir.js";
+export * from "./writeFileSyncIfChanged.js";
 // @INPRINT_END
