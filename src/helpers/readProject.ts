@@ -1,18 +1,21 @@
 import { join, posix } from "path";
 import fs from "fs";
-import { PolicyDefinition, ProjectData } from "src/types";
-import { filterFiles } from "../helpers";
-import { PACKAGE_JSON, PROJECT_POLICY_CONFIG_FILENAME, PROJECT_POLICY_PREV_CONTENT_FILENAME } from "../constant";
+import {PolicyData, PolicyDefinition, ProjectData} from "src/types";
+import {exceptPolicy, filterFiles} from "../helpers";
+import {
+    getErrorMissingPolicyMessage, PACKAGE_JSON, PROJECT_POLICY_CONFIG_FILENAME, PROJECT_POLICY_PREV_CONTENT_FILENAME
+} from "../constant";
 import { FileMap } from "../types/FileMap";
 import {FilterCollection} from "../types/other";
 
-export function readProject(projectDir: string): ProjectData {
+export function readProject(projectDir: string, policies: Map<string, PolicyData>,): ProjectData {
     const policyConf: PolicyDefinition = require(join(projectDir, PROJECT_POLICY_CONFIG_FILENAME));
     const files: FileMap = getProjectFiles(projectDir, policyConf?.options?.exclude ?? []);
     const packageJson: any = require(join(projectDir, PACKAGE_JSON));
     const prevContentJson: any = require(join(projectDir, PROJECT_POLICY_PREV_CONTENT_FILENAME));
     const location: string = projectDir;
     const prevPolicyFiles: Set<string> = new Set();
+    const policy = exceptPolicy(policies, policyConf.policy, projectDir);
 
     for (let [fileName, fileContent] of files) if (prevContentJson[fileName] === fileContent) prevPolicyFiles.add(fileName);
 
@@ -22,6 +25,7 @@ export function readProject(projectDir: string): ProjectData {
         packageJson,
         projectDir: location,
         prevPolicyFiles,
+        policy,
     };
 }
 

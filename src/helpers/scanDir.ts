@@ -1,4 +1,4 @@
-import {join as joinPath, join, posix} from "path";
+import { join as joinPath, join, posix } from "path";
 import { POLICY_DEFINITION_FILENAME, PROJECT_POLICY_CONFIG_FILENAME } from "../constant";
 import { PolicyData, ProjectData } from "../types";
 import { readPolicy } from "./readPolicy";
@@ -18,7 +18,7 @@ export function loadPolicies(policiesLocation: string): Map<string, PolicyData> 
     const policies = new Map<string, PolicyData>();
 
     let projectDirents = readdirSync(policiesLocation, { withFileTypes: true });
-    for(let dirEntry of projectDirents) {
+    for (let dirEntry of projectDirents) {
         const fullPolicyPath = join(policiesLocation, dirEntry.name);
         if (dirEntry.isDirectory() && isPolicy(fullPolicyPath)) {
             const policy = readPolicy(fullPolicyPath);
@@ -28,14 +28,14 @@ export function loadPolicies(policiesLocation: string): Map<string, PolicyData> 
     return policies;
 }
 
-export function loadProjects(projectsLocation: string): Map<string, ProjectData> {
+export function loadProjects(projectsLocation: string, policies: Map<string, PolicyData>): Map<string, ProjectData> {
     const projects = new Map<string, ProjectData>();
 
     let projectDirents = readdirSync(projectsLocation, { withFileTypes: true });
-    for(let dirEntry of projectDirents) {
+    for (let dirEntry of projectDirents) {
         const fullDirPath = join(projectsLocation, dirEntry.name);
         if (dirEntry.isDirectory() && isProject(fullDirPath)) {
-            projects.set(fullDirPath, readProject(fullDirPath));
+            projects.set(fullDirPath, readProject(fullDirPath, policies));
         }
     }
     return projects;

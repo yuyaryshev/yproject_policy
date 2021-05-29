@@ -13,9 +13,9 @@ export async function run() {
         const policies = loadPolicies(localModulesPath);
 
         if (isProject(currentPath)) {
-            await checkProject(policies, readProject(currentPath));
+            await checkProject(policies, readProject(currentPath, policies));
         } else {
-            const projects = loadProjects(localModulesPath);
+            const projects = loadProjects(localModulesPath, policies);
             for (let projectData of projects.values()) {
                 await checkProject(policies, projectData);
             }

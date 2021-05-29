@@ -1,4 +1,3 @@
-
 import { parse as JSON5Parse } from "JSON5";
 import { publishApiFuncs } from "./controller";
 import deepMerge from "deepmerge";
@@ -9,6 +8,7 @@ import http from "http";
 // @ts-ignore
 import cors from "cors";
 import { emptyEnv, mergeEnv, EnvBase } from "../helpers";
+import { PolicyData, ProjectData } from "../types";
 
 // @ts-ignore
 //import nodeSSPI from "express-node-sspi";
@@ -30,12 +30,14 @@ export const defaultSettings = (): YPolicyApiSettings => ({
 
 export interface YPolicyApiEnv<SettingsT extends YPolicyApiSettings = YPolicyApiSettings> {
     settings: SettingsT;
+    policies: Map<string, PolicyData>;
+    projects: Map<string, ProjectData>;
 }
 
 export type YPolicyApiServerEnv = YPolicyApiEnv & EnvBase;
 
 export const startYPolicyApiServer = async (opts?: YPolicyApiSettings): Promise<YPolicyApiServerEnv> => {
-    const pthis = (emptyEnv() as any) as YPolicyApiServerEnv;
+    const pthis = { ...emptyEnv(), policies: new Map<string, PolicyData>(), projects: new Map<string, ProjectData>() } as YPolicyApiServerEnv;
 
     console.log(`CODE00000094`, `Starting ypolicy_api_server...`);
     const settingsPath = resolve("./settings.json");
@@ -96,7 +98,7 @@ export const startYPolicyApiServer = async (opts?: YPolicyApiSettings): Promise<
 
     //app.use(express.static("public"));
 
-    console.log(`CODE00000287 Publishing apis:`)
+    console.log(`CODE00000287 Publishing apis:`);
     try {
         for (const publishApi of publishApiFuncs) {
             console.log(`CODE00000289 module ${publishApi.name.split("PublishApi")[0]}`);
@@ -117,4 +119,3 @@ export const startYPolicyApiServer = async (opts?: YPolicyApiSettings): Promise<
     });
     return env;
 };
-

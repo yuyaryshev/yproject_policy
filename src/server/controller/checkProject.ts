@@ -1,12 +1,12 @@
 import { Express } from "express";
 import { YPolicyApiServerEnv } from "../Env";
-import {readFileSync} from "fs";
-import {
-    CheckProjectApiResponse, decoderCheckProjectApiRequest, decoderCheckProjectApiResponse
-} from "../../types/api/CheckProject.types";
-import {writeFileSyncIfChanged} from "../../helpers/writeFileSyncIfChanged";
+import { readFileSync } from "fs";
+import { CheckProjectApiResponse, decoderCheckProjectApiRequest, decoderCheckProjectApiResponse } from "../../types/api/CheckProject.types";
+import { writeFileSyncIfChanged } from "../../helpers/writeFileSyncIfChanged";
 // @ts-ignore
-import {v4 as newGuid} from "uuid";
+import { v4 as newGuid } from "uuid";
+import { projectAutofix } from "../../helpers";
+import { ProjectData } from "../../types";
 
 export function checkProjectPublishApi(env: YPolicyApiServerEnv, app: Express) {
     app.get("/api/one", async function CheckProjectApi(req, res) {
@@ -15,34 +15,53 @@ export function checkProjectPublishApi(env: YPolicyApiServerEnv, app: Express) {
 
         try {
             const { project } = decoderCheckProjectApiRequest.runWithException(req.query);
-            // TODO implement body of checkProject api
+            const projectData: ProjectData = env.projects.get(project);
+            if (!(projectData && projectData.policy)) {
+                if (!projectData) error = `CODE00000000 Project "${project}" not found!`;
+                else error = `CODE00000000 Project "${project}" has no policy specified!`;
+            } else {
+                const policy = projectData.policy;
 
-            // let parsed;
-            // try {
-            //     const content = readFileSync(dataFilePath, "utf-8");
-            //     parsed = JSON.parse(content);
-            // } catch (e) {
-            //     parsed = undefined;
-            // }
-            //
-            // if (!parsed?.data) {
-            //     if (!parsed) parsed = {};
-            //     parsed.data = {};
-            //     parsed.dataVersion = newGuid();
-            //     writeFileSyncIfChanged(dataFilePath, JSON.stringify(parsed, undefined, "    "));
-            // }
-            // if (parsed && !parsed.data.ts) parsed.data.ts = "2000-01-01 00:00:00";
-            //
-            // const { data, dataVersion } = parsed;
-            //
-            // if (env.settings.onGet) await env.settings.onGet({ data, currentDataVersion: dataVersion });
+                const { policy, policyFiles, differentFiles, matchingFiles, projectExtraFiles, policyExtraFiles } = projectAutofix();
 
+                // TODO implement body of checkProject api - по аналогии с консольной версией
+                //      http://localhost:63342/api/file/src/helpers/checkProject.ts:87:1
+
+                // let parsed;
+                // try {
+                //     const content = readFileSync(dataFilePath, "utf-8");
+                //     parsed = JSON.parse(content);
+                // } catch (e) {
+                //     parsed = undefined;
+                // }
+                //
+                // if (!parsed?.data) {
+                //     if (!parsed) parsed = {};
+                //     parsed.data = {};
+                //     parsed.dataVersion = newGuid();
+                //     writeFileSyncIfChanged(dataFilePath, JSON.stringify(parsed, undefined, "    "));
+                // }
+                // if (parsed && !parsed.data.ts) parsed.data.ts = "2000-01-01 00:00:00";
+                //
+                // const { data, dataVersion } = parsed;
+                //
+                // if (env.settings.onGet) await env.settings.onGet({ data, currentDataVersion: dataVersion });
+
+                return res.send(
+                    JSON.stringify(
+                        decoderCheckProjectApiResponse.runWithException({
+                            ok: true,
+                        } as CheckProjectApiResponse),
+                    ),
+                );
+            }
             return res.send(
                 JSON.stringify(
                     decoderCheckProjectApiResponse.runWithException({
-                        ok: true,
-                    } as CheckProjectApiResponse)
-                )
+                        ok: false,
+                        error,
+                    } as CheckProjectApiResponse),
+                ),
             );
         } catch (e) {
             error = "CODE00000202 " + e.message + "\nat=" + e.at || "" + "\n\n" + e.stack;
@@ -53,7 +72,7 @@ export function checkProjectPublishApi(env: YPolicyApiServerEnv, app: Express) {
             JSON.stringify({
                 ok: false,
                 error,
-            })
+            }),
         );
     });
 }
