@@ -15,14 +15,14 @@ export function checkProjectPublishApi(env: YPolicyApiServerEnv, app: Express) {
 
         try {
             const { project } = decoderCheckProjectApiRequest.runWithException(req.query);
-            const projectData: ProjectData = env.projects.get(project);
+            const projectData: ProjectData | undefined = env.projects.get(project);
             if (!(projectData && projectData.policy)) {
-                if (!projectData) error = `CODE00000000 Project "${project}" not found!`;
-                else error = `CODE00000000 Project "${project}" has no policy specified!`;
+                if (!projectData) error = `CODE00000199 Project "${project}" not found!`;
+                else error = `CODE00000200 Project "${project}" has no policy specified!`;
             } else {
-                const policy = projectData.policy;
+                const { policy, policyFiles } = projectData;
 
-                const { policy, policyFiles, differentFiles, matchingFiles, projectExtraFiles, policyExtraFiles } = projectAutofix();
+                const { differentFiles, matchingFiles, projectExtraFiles, policyExtraFiles } = projectAutofix(projectData);
 
                 // TODO implement body of checkProject api - по аналогии с консольной версией
                 //      http://localhost:63342/api/file/src/helpers/checkProject.ts:87:1

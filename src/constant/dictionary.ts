@@ -2,7 +2,7 @@ import chalk from "chalk";
 import { LOCAL_PACKAGES_FOLDER } from "./";
 
 export function getErrorMissingPolicyMessage(policyName: string, projectDir: string) {
-    return chalk.red(`CODE00000283 Missing policy (${policyName}) for project (${projectDir}}).`);
+    return chalk.red(`CODE00000201 Missing policy (${policyName}) for project (${projectDir}}).`);
 }
 
 export function getStartCheckProjectMessage(policyName: string, projectDir: string) {

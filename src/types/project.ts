@@ -15,13 +15,9 @@ export type ProjectPolicyConfig = {
 export interface ProjectData {
     policyConf: ProjectPolicyConfig;
     projectFiles: FileMap;
+    policyFiles: FileMap;
     packageJson: object;
     projectDir: string;
     prevPolicyFiles: Set<string>;
-    policy: PolicyData | undefined;
-};
-
-
-export interface ProjectDataWithPolicy extends ProjectData {
     policy: PolicyData;
 };

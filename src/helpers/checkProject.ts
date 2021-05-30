@@ -1,14 +1,7 @@
-import {PolicyData, ProjectData, ProjectDataWithPolicy} from "../types";
+import { PolicyData, ProjectData } from "../types";
 import { readFileSync } from "fs-extra";
 import { basename, dirname, join } from "path";
-import {
-    filterExcludeFilesFromPolicy,
-    genPolicyFiles,
-    openFileDiffFromTextEditor,
-    readProject,    
-    showTable,
-    writeFileSyncIfChanged,
-} from "../helpers";
+import { filterExcludeFilesFromPolicy, openFileDiffFromTextEditor, readProject, showTable, writeFileSyncIfChanged } from "../helpers";
 import {
     getErrorMissingPolicyMessage,
     getFinishCheckProjectMessage,
@@ -23,17 +16,13 @@ import { FileDiffMap, FileMap } from "../types/FileMap";
 import { unlinkSync } from "fs";
 import chalk from "chalk";
 
-export function compareWithPolicy(projectData: ProjectDataWithPolicy) {
+export function compareWithPolicy(projectData: ProjectData) {
     const {
         projectDir,
         projectFiles,
         policyConf: { policy: policyName, options: projectOptions },
     } = projectData;
-    const policy = projectData.policy;
-    const policyFiles: FileMap = filterExcludeFilesFromPolicy(
-        new Map([...policy.files, ...genPolicyFiles(policy, projectData)]),
-        projectOptions?.exclude ?? [],
-    );
+    const { policy, policyFiles } = projectData;
 
     const projectExtraFiles: FileMap = new Map();
     for (const [fileName, projectContent] of projectFiles) if (!policyFiles.has(fileName)) projectExtraFiles.set(fileName, projectContent);
@@ -49,12 +38,12 @@ export function compareWithPolicy(projectData: ProjectDataWithPolicy) {
             else differentFiles.set(fileName, { projectContent, policyContent });
         }
     }
-    return { policy, policyFiles, matchingFiles, differentFiles, projectExtraFiles, policyExtraFiles };
+    return { matchingFiles, differentFiles, projectExtraFiles, policyExtraFiles };
 }
 
-export function projectAutofix(projectData: ProjectDataWithPolicy) {
+export function projectAutofix(projectData: ProjectData) {
     const { projectDir } = projectData;
-    const { policy, policyFiles, differentFiles, matchingFiles, projectExtraFiles, policyExtraFiles } = compareWithPolicy(projectData);
+    const { differentFiles, matchingFiles, projectExtraFiles, policyExtraFiles } = compareWithPolicy(projectData);
 
     // Add policy files
     for (const [fileName, policyContent] of policyExtraFiles) {
@@ -78,18 +67,17 @@ export function projectAutofix(projectData: ProjectDataWithPolicy) {
             projectExtraFiles.delete(fileName);
         }
 
-    return { policy, policyFiles, differentFiles, matchingFiles, projectExtraFiles, policyExtraFiles };
+    return { differentFiles, matchingFiles, projectExtraFiles, policyExtraFiles };
 }
 
 export async function checkProject(policies: Map<string, PolicyData>, projectData0: ProjectData): Promise<void> {
-    if(!projectData0.policy)
-        return;
+    if (!projectData0.policy) return;
 
-    const projectData:ProjectDataWithPolicy = projectData0 as ProjectDataWithPolicy;
+    const projectData: ProjectData = projectData0 as ProjectData;
 
     const { projectDir } = projectData;
     {
-        const { policy, policyFiles, differentFiles, matchingFiles, projectExtraFiles, policyExtraFiles } = projectAutofix(projectData);
+        const { differentFiles, matchingFiles, projectExtraFiles, policyExtraFiles } = projectAutofix(projectData);
 
         // Ask what to do with different files
         if (differentFiles.size) {
@@ -98,9 +86,9 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
                 await executeSelectedAction(
                     choice,
                     join(projectDir, relPath),
-                    policyFiles.get(relPath)!,
-                    policy.policyAbsPath,
-                    !policy.files.has(relPath),
+                    projectData.policyFiles.get(relPath)!,
+                    projectData.policy.policyAbsPath,
+                    !projectData.policy.files.has(relPath),
                 );
             }
         }
@@ -112,9 +100,9 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
                 await executeSelectedAction(
                     choice,
                     join(projectDir, relPath),
-                    policyFiles.get(relPath)!,
-                    policy.policyAbsPath,
-                    !policy.files.has(relPath),
+                    projectData.policyFiles.get(relPath)!,
+                    projectData.policy.policyAbsPath,
+                    !projectData.policy.files.has(relPath),
                 );
             }
         }
@@ -122,8 +110,8 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
 
     // Compare all over again and save files matching the policy
     {
-        Object.assign(projectData, readProject(projectDir,policies));
-        const { policy, policyFiles, matchingFiles } = compareWithPolicy(projectData);
+        Object.assign(projectData, readProject(projectDir, policies));
+        const { matchingFiles } = compareWithPolicy(projectData);
         const policyPrevMatchedData: any = {};
         for (const [fileName, projectContent] of matchingFiles) policyPrevMatchedData[fileName] = projectContent;
 
@@ -171,9 +159,9 @@ export async function showFileDiffGen(path: string, content: string): Promise<vo
 
 export function exceptPolicy(policies: Map<string, PolicyData>, policyName: string, projectName: string) {
     const policy = policies.get(policyName);
-    if(!policy) {
-        const e = new Error(`CODE00000283 Missing policy (${policyName}) for project (${projectName}}).`);
-        (e as any).code = 'EPOLICY_NOT_EXISTS';
+    if (!policy) {
+        const e = new Error(`CODE00000198 Missing policy (${policyName}) for project (${projectName}}).`);
+        (e as any).code = "EPOLICY_NOT_EXISTS";
         throw e;
     }
     return policy;
