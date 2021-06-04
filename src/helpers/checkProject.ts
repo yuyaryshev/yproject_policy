@@ -1,26 +1,17 @@
 import { PolicyData, ProjectData } from "../types";
 import { readFileSync } from "fs-extra";
 import { basename, dirname, join } from "path";
-import { filterExcludeFilesFromPolicy, openFileDiffFromTextEditor, readProject, showTable, writeFileSyncIfChanged } from "../helpers";
-import {
-    getErrorMissingPolicyMessage,
-    getFinishCheckProjectMessage,
-    getStartCheckProjectMessage,
-    INQUIRER_CHOICES,
-    inquirerAdditionalFilesConfig,
-    inquirerFilesNotMatchConfig,
-    POLICY_EXPECTS_FILE_PREFIX,
-    PROJECT_POLICY_PREV_CONTENT_FILENAME,
-} from "../constant";
+import { openFileDiffFromTextEditor, readProject, showTable, writeFileSyncIfChanged } from "../helpers";
+import { POLICY_EXPECTS_FILE_PREFIX, PROJECT_POLICY_PREV_CONTENT_FILENAME } from "../constant";
 import { FileDiffMap, FileMap } from "../types/FileMap";
-import { unlinkSync } from "fs";
+import { readdirSync, unlinkSync } from "fs";
 import chalk from "chalk";
 
 export function compareWithPolicy(projectData: ProjectData) {
     const {
         projectDir,
         projectFiles,
-        policyConf: { policy: policyName, options: projectOptions },
+        policyConf: { policyName: policyName, options: projectOptions },
     } = projectData;
     const { policy, policyFiles } = projectData;
 
@@ -74,6 +65,7 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
     if (!projectData0.policy) return;
 
     const projectData: ProjectData = projectData0 as ProjectData;
+    console.log(`CODE00000099 ${projectData.projectDir} - checkProject started`);
 
     const { projectDir } = projectData;
     {
@@ -81,7 +73,28 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
 
         // Ask what to do with different files
         if (differentFiles.size) {
-            for (const [relPath, choice] of await showTable(inquirerFilesNotMatchConfig, [...differentFiles.keys()])) {
+            const results = await showTable(
+                {
+                    message: chalk.bgWhite.red("CODE00000097 Files do not match. What are we gonna do?"),
+                    columns: [
+                        {
+                            name: "Skip",
+                            value: "SKIP",
+                        },
+                        {
+                            name: "Overwrite in project",
+                            value: "REPLACE",
+                        },
+                        {
+                            name: "Compare",
+                            value: "COMPARE",
+                        },
+                    ],
+                    pageSize: 20,
+                },
+                [...differentFiles.keys()],
+            );
+            for (const [relPath, choice] of results) {
                 // @ts-ignore
                 await executeSelectedAction(
                     choice,
@@ -95,7 +108,32 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
 
         // Ask what to do with extra files
         if (projectExtraFiles.size) {
-            for (const [relPath, choice] of await showTable(inquirerAdditionalFilesConfig, [...projectExtraFiles.keys()])) {
+            const results = await showTable(
+                {
+                    message: chalk.bgWhite.red("CODE00000098 Additional files found. What are we gonna do?"),
+                    columns: [
+                        {
+                            name: "Skip",
+                            value: "SKIP",
+                        },
+                        {
+                            name: "Remove from project",
+                            value: "REMOVE",
+                        },
+                        {
+                            name: "Add to policy",
+                            value: "TO_POLICY",
+                        },
+                        {
+                            name: "View file",
+                            value: "VIEW_FILE",
+                        },
+                    ],
+                    pageSize: 20,
+                },
+                [...projectExtraFiles.keys()],
+            );
+            for (const [relPath, choice] of results) {
                 // @ts-ignore
                 await executeSelectedAction(
                     choice,
@@ -118,29 +156,26 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
         const policyPrevMatchedDataStr = JSON.stringify(policyPrevMatchedData, undefined, "    ");
         writeFileSyncIfChanged(join(projectDir, PROJECT_POLICY_PREV_CONTENT_FILENAME), policyPrevMatchedDataStr);
     }
-    console.log(getFinishCheckProjectMessage());
+    console.log(chalk.green(`CODE00000201 ${projectData.projectDir} checkProject - completed.`));
 }
 
 async function executeSelectedAction(choice: string, absPath: string, fileContent: string, policyAbsPath: string, generated: boolean) {
     console.log(`CODE00000286 executeSelectedAction ${choice} ${absPath} ${policyAbsPath}`);
-    const {
-        replace: { value: replace },
-        compare: { value: compare },
-        remove: { value: remove },
-        to_policy: { value: to_policy },
-    } = INQUIRER_CHOICES;
     switch (choice) {
-        case replace:
+        case "REPLACE":
             writeFileSyncIfChanged(absPath, fileContent);
             break;
-        case compare:
+        case "COMPARE":
             if (!generated) await showFileDiffFile(absPath, policyAbsPath);
             else await showFileDiffGen(absPath, fileContent);
             break;
-        case remove:
+        case "VIEW_FILE":
+            await showFileDiffGen(absPath, "");
+            break;
+        case "REMOVE":
             unlinkSync(absPath);
             break;
-        case to_policy:
+        case "TO_POLICY":
             writeFileSyncIfChanged(join(policyAbsPath, basename(absPath)), readFileSync(absPath, "utf-8"));
             break;
         default:

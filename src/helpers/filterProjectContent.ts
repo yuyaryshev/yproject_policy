@@ -2,38 +2,35 @@
 import { defaultFilterCollection } from "../constant";
 import micromatch from "micromatch";
 import arrayUnion from "array-union";
-import {FileMap} from "../types/FileMap";
-import {join, posix} from "path";
-import {readdirSync} from "fs";
-import {Filter, FilterCollection} from "../types/other";
+import { FileMap } from "../types/FileMap";
+import { join, posix } from "path";
+import { readdirSync } from "fs";
+import { Filter, FilterCollection } from "../types/other";
 
-export function filterFiles(rootPath: string, includeFilters: FilterCollection | Filter = "**", excludeFilters: FilterCollection = []): Array<string> {
-    const dirents = readdirSync(rootPath, { withFileTypes: true });
-    const files = dirents.filter(f => !f.isDirectory()).map(f=> f.name);
-    return micromatch(files, includeFilters, {
-        dot: true,
-        ignore: arrayUnion(defaultFilterCollection, excludeFilters),
-    });
-
-
-    // const posixPath = posix.normalize(rootPath);
-    // return globby.sync(includeFilters, {
-    //     expandDirectories: false,
-    //     gitignore: false,
-    //     onlyFiles: true,
-    //     cwd: posixPath,
-    //     ignore: arrayUnion(defaultFilterCollection, excludeFilters),
-    //     dot: true,
-    // });
+export function mergeGlobs(...filters: (FilterCollection | undefined)[]): FilterCollection {
+    const r: FilterCollection = [];
+    for (const f of filters) if (f) r.push(...f);
+    return r;
 }
 
-export function filterExcludeFilesFromPolicy(policyFiles: FileMap, excludeFilters: FilterCollection = []): FileMap {
-    if (!excludeFilters.length) return policyFiles;
-    const result = new Map();
-    micromatch([...policyFiles.keys()], "**", {
+export function filterFiles(
+    fileNames: string[],
+    includeFilters: FilterCollection | Filter = "**",
+    excludeFilters: FilterCollection = [],
+): Array<string> {
+    const opts = {
         dot: true,
-        ignore: excludeFilters,
-    }).forEach((path) => result.set(path, policyFiles.get(path)));
+        ignore: arrayUnion(defaultFilterCollection, excludeFilters),
+    };
+    const filteredFileNames = micromatch(fileNames, includeFilters, opts);
+    // console.log("opts=", opts);
+    // console.log("fileNames=", fileNames);
+    // console.log("filteredFileNames=", filteredFileNames);
+    return filteredFileNames;
+}
 
-    return result;
+export function dirFilesOnly(rootPath: string) {
+    const dirents = readdirSync(rootPath, { withFileTypes: true });
+    const files = dirents.filter((f) => !f.isDirectory()).map((f) => f.name);
+    return files;
 }

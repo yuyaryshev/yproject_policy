@@ -2,14 +2,14 @@ import {FileMap} from "./FileMap";
 import {FilterCollection} from "./other";
 import {PolicyData} from "./policy";
 
-export type ProjectOptions = {
+export type ProjectPolicyOptions = {
     exclude?: FilterCollection;
     [x: string]: any;
 };
 
 export type ProjectPolicyConfig = {
     policy: string;
-    options?: ProjectOptions;
+    options?: ProjectPolicyOptions;
 };
 
 export interface ProjectData {

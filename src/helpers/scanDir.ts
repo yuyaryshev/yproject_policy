@@ -22,7 +22,7 @@ export function loadPolicies(policiesLocation: string): Map<string, PolicyData> 
         const fullPolicyPath = join(policiesLocation, dirEntry.name);
         if (dirEntry.isDirectory() && isPolicy(fullPolicyPath)) {
             const policy = readPolicy(fullPolicyPath);
-            policies.set(policy.policy.policy, policy);
+            policies.set(policy.policyName, policy);
         }
     }
     return policies;

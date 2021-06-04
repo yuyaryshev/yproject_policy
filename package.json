@@ -1,6 +1,6 @@
 {
     "name": "yproject_policy",
-    "version": "0.0.3",
+    "version": "0.1.6",
     "description": "Local package manager. A tool to manage your multi-repo.",
     "type": "commonjs",
     "main": "./bin/index.js",
@@ -26,7 +26,7 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "watch:src": "rmdir lib\\src /s /q & ycplmon2 fix src && inprint && babel src --config-file ./babel.lo.config.cjs --out-dir lib\\src --extensions \".ts\" --source-maps inline -w",
         "build": "rmdir lib\\src /s /q & ycplmon2 fix src && inprint && babel src --config-file ./babel.lo.config.cjs --out-dir lib\\src --extensions \".ts\" --source-maps inline",
-        "republish": "npm run build && npx version-select && npx genversion --es6 --semi version.js && npm publish && npm i -g yproject_policy@latest && yproject_policy --version",
+        "republish": "npm run build && npx version-select && npx genversion --semi src/version.js && npx genversion --semi lib/src/version.js && npm publish && npm i -g yproject_policy@latest && yproject_policy --version",
         "start": "node --inspect ./bin/index.js",
         "build:validators": "npx typescript-json-validator src/types/api/AckPacket.ts --useNamedExport"
     },
@@ -79,6 +79,7 @@
         "globby": "^11.0.2",
         "inquirer": "^7.3.3",
         "inquirer-table-prompt": "^0.2.1",
-        "micromatch": "^4.0.2"
+        "micromatch": "^4.0.2",
+        "ystd": "^1.0.12"
     }
 }

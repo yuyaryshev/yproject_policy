@@ -1,5 +1,4 @@
 import inquirer from "inquirer";
-import { INQUIRER_CHOICES } from "../constant";
 import {InquirerTableCell, InquirerTableConfig} from "../types/other";
 
 inquirer.registerPrompt("table", require("inquirer-table-prompt"));
