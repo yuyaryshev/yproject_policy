@@ -1,17 +1,44 @@
-import { join, posix } from "path";
-import fs from "fs";
+import { resolve, join, posix } from "path";
+import { readFileSync } from "fs";
 import { PolicyData, PolicyDefinition, PolicyOptions, ProjectData, ProjectPolicyConfig } from "src/types";
 import { dirFilesOnly, exceptPolicy, filterFiles, mergeGlobs } from "../helpers";
 import { genFileFilter, PACKAGE_JSON, PROJECT_POLICY_CONFIG_FILENAME, PROJECT_POLICY_PREV_CONTENT_FILENAME } from "../constant";
 import { FileMap } from "../types/FileMap";
 import { FilterCollection } from "../types/other";
 
-function genPolicyFiles({ policy, packageJson, policyConf }: { policy: PolicyData; packageJson: any; policyConf: ProjectPolicyConfig }): FileMap {
+function genPolicyFiles({
+    projectDir,
+    policy,
+    packageJson,
+    policyConf,
+    projectFiles,
+}: {
+    projectDir: string;
+    policy: PolicyData;
+    packageJson: any;
+    policyConf: ProjectPolicyConfig;
+    projectFiles: FileMap;
+}): FileMap {
     // Generating policy files - start
     const policyGeneratedFiles = new Map();
 
-    for (let [relPath, { generate }] of policy.genFiles.entries())
-        policyGeneratedFiles.set(relPath.replace(/\.gen\.cjs$/, ""), generate(packageJson ?? {}, policyConf?.options ?? {}));
+    for (let [relPath, { generate, filename }] of policy.genFiles.entries()) {
+        const filename2 =
+            typeof filename === "string"
+                ? filename
+                : typeof filename === "function"
+                ? filename(packageJson ?? {}, policyConf?.options ?? {})
+                : relPath.replace(/\.gen\.cjs$/, "");
+        const finalFilename = resolve(projectDir, filename2);
+        const content = generate(
+            packageJson ?? {},
+            policyConf?.options ?? {},
+            projectFiles.get(filename2) || "",
+            //readFileSync(finalFilename, "utf-8") || "",
+        );
+        policy.files.delete(filename2);
+        policyGeneratedFiles.set(filename2, content);
+    }
 
     const policyFiles0: FileMap = new Map([...policy.files, ...policyGeneratedFiles]);
     const policyFiles: FileMap = new Map();
@@ -27,7 +54,7 @@ export function readProject(projectDir: string, policies: Map<string, PolicyData
 
     const files: FileMap = new Map();
     const fileNames = filterFiles(dirFilesOnly(projectDir), "**", excludeFilters);
-    for (let relPath of fileNames) files.set(relPath, fs.readFileSync(join(projectDir, relPath)).toString());
+    for (let relPath of fileNames) files.set(relPath, readFileSync(join(projectDir, relPath)).toString());
     const packageJson: any = require(join(projectDir, PACKAGE_JSON));
     let prevContentJson: any;
     try {
@@ -36,7 +63,7 @@ export function readProject(projectDir: string, policies: Map<string, PolicyData
         prevContentJson = {};
     }
     const prevPolicyFiles: Set<string> = new Set();
-    const policyFiles: FileMap = genPolicyFiles({ policy, packageJson, policyConf: projectPolicyConfig });
+    const policyFiles: FileMap = genPolicyFiles({ projectDir, policy, packageJson, policyConf: projectPolicyConfig, projectFiles: files });
 
     for (let [fileName, fileContent] of files) if (prevContentJson[fileName] === fileContent) prevPolicyFiles.add(fileName);
     return {

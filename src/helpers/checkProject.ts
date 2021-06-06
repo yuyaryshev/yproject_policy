@@ -1,7 +1,7 @@
 import { PolicyData, ProjectData } from "../types";
 import { readFileSync } from "fs-extra";
 import { basename, dirname, join } from "path";
-import { openFileDiffFromTextEditor, readProject, showTable, writeFileSyncIfChanged } from "../helpers";
+import { dirFilesOnly, filterFiles, openFileDiffFromTextEditor, readProject, showTable, writeFileSyncIfChanged } from "../helpers";
 import { POLICY_EXPECTS_FILE_PREFIX, PROJECT_POLICY_PREV_CONTENT_FILENAME } from "../constant";
 import { FileDiffMap, FileMap } from "../types/FileMap";
 import { readdirSync, unlinkSync } from "fs";
@@ -9,11 +9,12 @@ import chalk from "chalk";
 
 export function compareWithPolicy(projectData: ProjectData) {
     const {
+        policy,
+        policyFiles,
         projectDir,
         projectFiles,
-        policyConf: { policyName: policyName, options: projectOptions },
+        policyConf: { policy: policyName, options: projectOptions },
     } = projectData;
-    const { policy, policyFiles } = projectData;
 
     const projectExtraFiles: FileMap = new Map();
     for (const [fileName, projectContent] of projectFiles) if (!policyFiles.has(fileName)) projectExtraFiles.set(fileName, projectContent);
@@ -25,7 +26,7 @@ export function compareWithPolicy(projectData: ProjectData) {
         const projectContent = projectFiles.get(fileName) || "";
         if (!projectFiles.has(fileName)) policyExtraFiles.set(fileName, policyContent);
         else {
-            if (policyContent === projectContent) matchingFiles.set(fileName, policyContent);
+            if (policyContent.trim() === projectContent.trim()) matchingFiles.set(fileName, policyContent);
             else differentFiles.set(fileName, { projectContent, policyContent });
         }
     }
@@ -156,6 +157,13 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
         const policyPrevMatchedDataStr = JSON.stringify(policyPrevMatchedData, undefined, "    ");
         writeFileSyncIfChanged(join(projectDir, PROJECT_POLICY_PREV_CONTENT_FILENAME), policyPrevMatchedDataStr);
     }
+
+    { // Remove temporary files
+        const files = filterFiles(dirFilesOnly(projectDir), POLICY_EXPECTS_FILE_PREFIX + "*.*", []);
+        // console.log(`CODE00000189 Files to be deleted\n`, JSON.stringify(files, undefined, "    "));
+        for (const filename of files) unlinkSync(join(projectDir, filename));
+    }
+
     console.log(chalk.green(`CODE00000201 ${projectData.projectDir} checkProject - completed.`));
 }
 

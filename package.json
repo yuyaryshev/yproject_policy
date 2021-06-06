@@ -1,6 +1,6 @@
 {
     "name": "yproject_policy",
-    "version": "0.1.6",
+    "version": "0.1.13",
     "description": "Local package manager. A tool to manage your multi-repo.",
     "type": "commonjs",
     "main": "./bin/index.js",

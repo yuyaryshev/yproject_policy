@@ -1,7 +1,8 @@
-import {PolicyOptions} from "./policy";
+import { PolicyOptions } from "./policy";
 
 export type PolicyFileGenerator = {
-    generate: (packageJson: object, policyOptions: PolicyOptions) => string;
+    generate: (packageJson: object, policyOptions: PolicyOptions, prevContent: string) => string;
+    filename?: string | ((packageJson: object, policyOptions: PolicyOptions) => string);
 };
 
 export type GenFilesMap = Map<string, PolicyFileGenerator>;
