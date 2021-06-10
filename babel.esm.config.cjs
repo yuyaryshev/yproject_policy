@@ -39,6 +39,6 @@ module.exports = {
                 alias: aliases,
             },
         ],
-        "@babel/transform-modules-commonjs",
+        // DON'T ADD @babel/transform-modules-commonjs here! It's added in babel.cjs.config.cjs!
     ],
 };

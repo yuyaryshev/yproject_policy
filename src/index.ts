@@ -1,24 +1,27 @@
-import { checkProject, getLocalModulesPath, isProject, loadPolicies, loadProjects, readProject } from "./helpers";
+import { checkProject, getNpmConfig, isProject, loadPolicies, loadProjects, readProject } from "./helpers/index.js";
 import { program } from "commander";
-import { LOCAL_PACKAGES_FOLDER } from "./constant";
+import { NPM_CONF_LOCAL_PACKAGES_FOLDER } from "./constant/index.js";
 import chalk from "chalk";
 import { outputFileSync } from "fs-extra";
 import { existsSync } from "fs";
-
-// @ts-ignore
-import version from "./version.js";
+import { join } from "path";
+import { version } from "./projmeta.js";
+import { expectNpmConfigKeyString } from "./helpers/getNpmConfig.js";
 
 export async function run() {
     try {
-        program.option("-all --check-all-local-project", `will check all your projects in "${LOCAL_PACKAGES_FOLDER}"`);
+        program.option("-all --check-all-local-project", `will check all your projects in "${NPM_CONF_LOCAL_PACKAGES_FOLDER}"`);
         program.option("-add [policyName]", `add this project to policy`);
+        program.option("-gengit --gengit", `generate git commands for all policy projects`);
         program.option("-v --version", `outputs current version`);
+        program.option("-l --list", `list all projects under policy "${NPM_CONF_LOCAL_PACKAGES_FOLDER}"`);
+        program.option("-ls --ls", `list all projects under policy "${NPM_CONF_LOCAL_PACKAGES_FOLDER}"`);
         program.parse(process.argv);
 
         const { checkAllLocalProject } = program.opts();
-        const localModulesPath = await getLocalModulesPath();
+        const localModulesPath = await expectNpmConfigKeyString(NPM_CONF_LOCAL_PACKAGES_FOLDER);
         const currentPath = checkAllLocalProject ? localModulesPath : process.cwd();
-        const policies = loadPolicies(localModulesPath);
+        const policies = await loadPolicies();
 
         if (["-v", "-version", "--version"].includes(process.argv[2])) {
             console.log(version);
@@ -29,7 +32,7 @@ export async function run() {
                 console.log(chalk.red(`CODE00000186 '${configFileName}' already exits...`));
             } else {
                 const query = process.argv[3];
-                for (let [, policy] of policies) {
+                for (const [, policy] of policies) {
                     if (policy.policyName.toLocaleLowerCase() === query.toLocaleLowerCase()) {
                         const content = `module.exports = {
     policy: "${policy.policyName}",
@@ -43,18 +46,73 @@ export async function run() {
                     }
                 }
                 console.log(chalk.red(`CODE00000187 Policy '${query}' doesn't exist. Maybe you ment one of these?`));
-                for (let [, policy] of policies) {
+                for (const [, policy] of policies) {
                     if (policy.policyName.toLocaleLowerCase().includes(query.toLocaleLowerCase()))
                         console.log(`yproject_policy -add ${policy.policyName}`);
                 }
                 return;
             }
         } else if (["-all", "--check-all-local-project"].includes(process.argv[2])) {
-            console.log(`CODE00000100 yproject_policy v${version} started. Checking all projects`);
+            console.log(`CODE00000190 yproject_policy v${version} started. Checking all projects`);
             const projects = loadProjects(localModulesPath, policies);
-            for (let projectData of projects.values()) {
+            for (const projectData of projects.values()) {
                 await checkProject(policies, projectData);
             }
+        } else if (["-l", "--list", "-ls", "--ls"].includes(process.argv[2])) {
+            const projects = loadProjects(localModulesPath, policies);
+            for (const projectData of projects.values()) {
+                console.log(projectData.projectDir);
+            }
+        } else if (["-gengit", "--gengit"].includes(process.argv[2])) {
+            console.log(`CODE00000191 yproject_policy v${version} started. Checking all projects`);
+            const projects = loadProjects(localModulesPath, policies);
+            const pushAllLines = [];
+            const addAndPushAllLines = [];
+            const pullAllLines = [];
+            const pullAllAndBuildLines = [];
+            const pullAllpnpmiLines = [];
+
+            for (const projectData of projects.values()) {
+                const { projectDir } = projectData;
+                const pushLine = `cd ${projectDir} & git add --all && git commit -a -m push_all && git push origin`;
+                addAndPushAllLines.push(pushLine);
+                pushAllLines.push(pushLine.split("git add --all && ").join(""));
+
+                const pullLine = `cmd /c "d: && cd ${projectDir} & git pull & pnpm i && pnpm run build"`;
+                pullAllAndBuildLines.push(pullLine);
+                pullAllLines.push(pullLine.split("& pnpm i && pnpm run build").join(""));
+                pullAllpnpmiLines.push(pullLine.split(" && pnpm run build").join(""));
+            }
+
+            const pushAllCmd = pushAllLines.join("\n");
+            const addAndPushAllCmd = addAndPushAllLines.join("\n");
+            const pullAllCmd = pullAllLines.join("\n");
+            const pullAllAndBuildCmd = pullAllAndBuildLines.join("\n");
+            const pullAllpnpmiLinesCmd = pullAllpnpmiLines.join("\n");
+
+            const targetDir = process.argv[3];
+            if (targetDir) {
+                outputFileSync(join(targetDir, "push_all.bat"), pushAllCmd);
+                outputFileSync(join(targetDir, "add_and_push_all.bat"), addAndPushAllCmd);
+                outputFileSync(join(targetDir, "pull_all.bat"), pullAllCmd);
+                outputFileSync(join(targetDir, "pull_all_and_build.bat"), pullAllAndBuildCmd);
+                outputFileSync(join(targetDir, "pull_all_pnpmi.bat"), pullAllpnpmiLinesCmd);
+                console.log(`Written bat files to ${targetDir}`);
+            } else
+                console.log(`
+Push all:
+${pushAllCmd}
+
+Add and push all:
+${addAndPushAllCmd}
+
+Pull all:
+${pullAllCmd}
+
+Pull all anf build:
+${pullAllAndBuildCmd}
+
+            `);
         } else if (isProject(currentPath)) {
             console.log(`CODE00000184 yproject_policy v${version} started. Checking only '${currentPath}' project`);
             await checkProject(policies, readProject(currentPath, policies));

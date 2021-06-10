@@ -1,9 +1,9 @@
-import { PolicyData, ProjectData } from "../types";
+import { PolicyData, ProjectData } from "../types/index.js";
 import { readFileSync } from "fs-extra";
 import { basename, dirname, join } from "path";
-import { dirFilesOnly, filterFiles, openFileDiffFromTextEditor, readProject, showTable, writeFileSyncIfChanged } from "../helpers";
-import { POLICY_EXPECTS_FILE_PREFIX, PROJECT_POLICY_PREV_CONTENT_FILENAME } from "../constant";
-import { FileDiffMap, FileMap } from "../types/FileMap";
+import { dirFilesOnly, filterFiles, openFileDiffFromTextEditor, readProject, showTable, writeFileSyncIfChanged } from "../helpers/index.js";
+import { POLICY_EXPECTS_FILE_PREFIX, PROJECT_POLICY_PREV_CONTENT_FILENAME } from "../constant/index.js";
+import { FileDiffMap, FileMap } from "../types/FileMap.js";
 import { readdirSync, unlinkSync } from "fs";
 import chalk from "chalk";
 
@@ -158,7 +158,8 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
         writeFileSyncIfChanged(join(projectDir, PROJECT_POLICY_PREV_CONTENT_FILENAME), policyPrevMatchedDataStr);
     }
 
-    { // Remove temporary files
+    {
+        // Remove temporary files
         const files = filterFiles(dirFilesOnly(projectDir), POLICY_EXPECTS_FILE_PREFIX + "*.*", []);
         // console.log(`CODE00000189 Files to be deleted\n`, JSON.stringify(files, undefined, "    "));
         for (const filename of files) unlinkSync(join(projectDir, filename));

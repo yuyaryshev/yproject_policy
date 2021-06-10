@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require("../lib/index.cjs").run();
+require("../lib/cjs/index.js").run();

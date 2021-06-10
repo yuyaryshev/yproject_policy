@@ -1,3 +1,3 @@
-import {startYPolicyApiServer} from "./Env";
+import { startYPolicyApiServer } from "./Env.js";
 
-startYPolicyApiServer();
+startYPolicyApiServer().then();

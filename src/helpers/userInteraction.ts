@@ -1,5 +1,5 @@
 import inquirer from "inquirer";
-import {InquirerTableCell, InquirerTableConfig} from "../types/other";
+import { InquirerTableCell, InquirerTableConfig } from "../types/other.js";
 
 inquirer.registerPrompt("table", require("inquirer-table-prompt"));
 

@@ -1,20 +1,9 @@
 import execa from "execa";
-import { LOCAL_PACKAGES_FOLDER, DIFF_EDITOR } from "../constant";
+import { NPM_CONF_DIFF_EDITOR } from "../constant/index.js";
 import chalk from "chalk";
 
-export async function getLocalModulesPath() {
-    const { stdout } = await execa("npm config get", [LOCAL_PACKAGES_FOLDER]);
-
-    if (stdout === "undefined") {
-        console.error(chalk.red(`CODE00000284 Please use 'npm config set ${LOCAL_PACKAGES_FOLDER}' to define projects folder.`));
-        process.exit(1);
-    }
-
-    return stdout;
-}
-
 export async function getTextEditorPath(): Promise<string | undefined> {
-    const { stdout } = await execa("npm config get", [DIFF_EDITOR]);
+    const { stdout } = await execa("npm config get", [NPM_CONF_DIFF_EDITOR]);
     return stdout !== "undefined" ? stdout : undefined;
 }
 

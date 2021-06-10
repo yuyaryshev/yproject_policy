@@ -1,11 +1,11 @@
 // import globby from "globby";
-import { defaultFilterCollection } from "../constant";
+import { defaultFilterCollection } from "../constant/index.js";
 import micromatch from "micromatch";
 import arrayUnion from "array-union";
-import { FileMap } from "../types/FileMap";
+import { FileMap } from "../types/FileMap.js";
 import { join, posix } from "path";
 import { readdirSync } from "fs";
-import { Filter, FilterCollection } from "../types/other";
+import { Filter, FilterCollection } from "../types/other.js";
 
 export function mergeGlobs(...filters: (FilterCollection | undefined)[]): FilterCollection {
     const r: FilterCollection = [];
@@ -22,15 +22,10 @@ export function filterFiles(
         dot: true,
         ignore: arrayUnion(defaultFilterCollection, excludeFilters),
     };
-    const filteredFileNames = micromatch(fileNames, includeFilters, opts);
-    // console.log("opts=", opts);
-    // console.log("fileNames=", fileNames);
-    // console.log("filteredFileNames=", filteredFileNames);
-    return filteredFileNames;
+    return micromatch(fileNames, includeFilters, opts);
 }
 
 export function dirFilesOnly(rootPath: string) {
     const dirents = readdirSync(rootPath, { withFileTypes: true });
-    const files = dirents.filter((f) => !f.isDirectory()).map((f) => f.name);
-    return files;
+    return dirents.filter((f) => !f.isDirectory()).map((f) => f.name);
 }

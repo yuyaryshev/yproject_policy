@@ -12,6 +12,5 @@ export function AckPacketDecoders() {
     };
 }
 export const decoderAckPacket: Decoder<AckPacket> = object({
-    ...AckPacketDecoders()
+    ...AckPacketDecoders(),
 });
-

@@ -1,12 +1,12 @@
 import { anyJson, boolean, Decoder, object, optional, string } from "@mojotech/json-type-validation";
-import {AckPacket, AckPacketDecoders} from "./AckPacket.types";
+import { AckPacket, AckPacketDecoders } from "./AckPacket.types";
 
 //----------------------------------------------------------------------------------------------------
 export interface CheckProjectApiRequest {
     project: string;
 }
 export const decoderCheckProjectApiRequest: Decoder<CheckProjectApiRequest> = object({
-    project:string(),
+    project: string(),
     //dataVersionOnly: optional(string()),
 });
 

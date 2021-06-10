@@ -81,13 +81,16 @@ typings/
 # Nuxt.js build / generate output
 .nuxt
 dist
+lib
+node_modules
+/temp
+/docs
 
 # Gatsby files
 .cache/
 # Comment in the public line in if your project uses Gatsby and *not* Next.js
 # https://nextjs.org/blog/next-9-1#public-directory-support
 # public
-
 # vuepress build output
 .vuepress/dist
 
@@ -103,11 +106,24 @@ dist
 # TernJS port file
 .tern-port
 
-# Intellij Idea files
-**/.idea/workspace.xml **/.idea/tasks.xml
 
-# lib folder - it'll be compiled
-lib
-/package-lock.json
-/pnpm-lock.yaml
-/src/cpl.json
+private.json
+private.js
+private.cjs
+settings.json
+settings.js
+settings.cjs
+
+
+
+/ts_out
+/yinstr_out
+/docs
+/out
+/ut_temp
+distCompiled
+/ut_hasty2.db
+/src/AppIDE/server/domains_gen
+/src/AppIDE/server/domains_gen
+*.parser_log
+

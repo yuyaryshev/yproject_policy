@@ -1,6 +1,6 @@
-import {FileMap} from "./FileMap";
-import {FilterCollection} from "./other";
-import {PolicyData} from "./policy";
+import { FileMap } from "./FileMap.js";
+import { FilterCollection } from "./other.js";
+import { PolicyData } from "./policy.js";
 
 export type ProjectPolicyOptions = {
     exclude?: FilterCollection;
@@ -20,4 +20,4 @@ export interface ProjectData {
     projectDir: string;
     prevPolicyFiles: Set<string>;
     policy: PolicyData;
-};
+}

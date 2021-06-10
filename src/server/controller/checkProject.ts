@@ -1,12 +1,12 @@
 import { Express } from "express";
-import { YPolicyApiServerEnv } from "../Env";
+import { YPolicyApiServerEnv } from "../Env.js";
 import { readFileSync } from "fs";
 import { CheckProjectApiResponse, decoderCheckProjectApiRequest, decoderCheckProjectApiResponse } from "../../types/api/CheckProject.types";
-import { writeFileSyncIfChanged } from "../../helpers/writeFileSyncIfChanged";
+import { writeFileSyncIfChanged } from "../../helpers/writeFileSyncIfChanged.js";
 // @ts-ignore
 import { v4 as newGuid } from "uuid";
-import { projectAutofix } from "../../helpers";
-import { ProjectData } from "../../types";
+import { projectAutofix } from "../../helpers/index.js";
+import { ProjectData } from "../../types/index.js";
 
 export function checkProjectPublishApi(env: YPolicyApiServerEnv, app: Express) {
     app.get("/api/one", async function CheckProjectApi(req, res) {

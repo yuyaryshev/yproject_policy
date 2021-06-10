@@ -1,5 +1,5 @@
 import { parse as JSON5Parse } from "JSON5";
-import { publishApiFuncs } from "./controller";
+import { publishApiFuncs } from "./controller/index.js";
 import deepMerge from "deepmerge";
 import { readFileSync } from "fs";
 import { resolve } from "path";
@@ -7,8 +7,8 @@ import express from "express";
 import http from "http";
 // @ts-ignore
 import cors from "cors";
-import { emptyEnv, mergeEnv, EnvBase } from "../helpers";
-import { PolicyData, ProjectData } from "../types";
+import { emptyEnv, mergeEnv, EnvBase } from "../helpers/index.js";
+import { PolicyData, ProjectData } from "../types/index.js";
 
 // @ts-ignore
 //import nodeSSPI from "express-node-sspi";

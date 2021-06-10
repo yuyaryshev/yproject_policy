@@ -1,4 +1,4 @@
-import { PolicyOptions } from "./policy";
+import { PolicyOptions } from "./policy.js";
 
 export type PolicyFileGenerator = {
     generate: (packageJson: object, policyOptions: PolicyOptions, prevContent: string) => string;
