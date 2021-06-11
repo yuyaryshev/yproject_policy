@@ -157,8 +157,8 @@
     <list>
       <item itemvalue="Attach to Node.js/Chrome.Attach to external console" />
       <item itemvalue="Node.js.--version" />
-      <item itemvalue="Node.js.-l" />
       <item itemvalue="Node.js.-add" />
+      <item itemvalue="Node.js.-l" />
       <item itemvalue="Node.js.generate_validators.cjs" />
       <item itemvalue="Node.js.index.js" />
       <item itemvalue="Node.js.on -all" />
