@@ -32,7 +32,7 @@
         "resolver": "jest-ts-webcompat-resolver"
     },
     "scripts": {
-        "test": "jest --passWithNoTests",
+        "test": "jest --config=jest.config-ts.cjs --passWithNoTests",
         "build": "npm run precompile_full && npm run clean && npm run build:esm && npm run build:cjs && npm run build:types && npm run lint && npm run test && npm run build:docs",
         "republish": "npm run build && npx version-select && yb genprojmeta && npm publish",
         "precompile": "inprint && ycplmon2 fix src && eslint src --fix --quiet",
@@ -55,7 +55,10 @@
         "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
         "deps": "echo Finding loops in .js requires... & del deps.png & madge dist -c -i deps.png && deps.png",
         "deps_all": "echo Generating full .js requires tree... & del deps.png & madge dist -i deps.png && deps.png",
-        "deps_orphans": "echo Finding orphans .js requires... & del deps.png & madge dist --orphans -i deps.png && deps.png"
+        "deps_orphans": "echo Finding orphans .js requires... & del deps.png & madge dist --orphans -i deps.png && deps.png",
+        "watch:test:cjs": "npm run build:cjs && jest --config=jest.config-cjs.cjs --passWithNoTests -w",
+        "test:cjs": "npm run build:cjs && jest --config=jest.config-cjs.cjs --passWithNoTests",
+        "test:ts": "jest --config=jest.config-ts.cjs --passWithNoTests"
     },
     "devDependencies": {
         "@babel/cli": "7.14.3",
