@@ -34,5 +34,6 @@ export function readPolicy(projectDir: string): PolicyData {
         policyAbsPath: resolve(projectDir),
         genFiles,
         files,
+        create: policyDefinition.create,
     };
 }

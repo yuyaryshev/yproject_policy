@@ -9,11 +9,16 @@ import { version } from "./projmeta.js";
 import { expectNpmConfigKeyString } from "./helpers/getNpmConfig.js";
 
 export async function run() {
+    let projectsProcessed = 0;
     try {
         program.option("-all --check-all-local-project", `will check all your projects in "${NPM_CONF_LOCAL_PACKAGES_FOLDER}"`);
         program.option("-add [policyName]", `add this project to policy`);
         program.option("-gengit --gengit", `generate git commands for all policy projects`);
         program.option("-v --version", `outputs current version`);
+        program.option(
+            "-create --create [policyName]",
+            `Used to create a new policy based project in current folder. The folder should be already cloned from a git repo.`,
+        );
         program.option("-l --list", `list all projects under policy "${NPM_CONF_LOCAL_PACKAGES_FOLDER}"`);
         program.option("-ls --ls", `list all projects under policy "${NPM_CONF_LOCAL_PACKAGES_FOLDER}"`);
         program.parse(process.argv);
@@ -26,12 +31,12 @@ export async function run() {
         if (["-v", "-version", "--version"].includes(process.argv[2])) {
             console.log(version);
             return;
-        } else if (["-add"].includes(process.argv[2])) {
+        } else if (["-add", "--add", "-create", "--create"].includes(process.argv[2])) {
             const configFileName = `yproject_policy.cjs`;
             if (existsSync(configFileName)) {
                 console.log(chalk.red(`CODE00000186 '${configFileName}' already exits...`));
             } else {
-                const query = process.argv[3];
+                const query = process.argv[3] || (policies.size === 1 ? [...policies.values()][0].policyName : "");
                 for (const [, policy] of policies) {
                     if (policy.policyName.toLocaleLowerCase() === query.toLocaleLowerCase()) {
                         const content = `module.exports = {
@@ -42,13 +47,20 @@ export async function run() {
 `;
                         outputFileSync(configFileName, content, "utf-8");
                         console.log(`Added '${configFileName}' for policy '${policy.policyName}' to current dir.`);
+
+                        if (process.argv[2].includes("create") && policy.create) {
+                            // Call policy.create script here
+                            await policy.create?.(configFileName);
+                        }
                         return;
                     }
                 }
                 console.log(chalk.red(`CODE00000187 Policy '${query}' doesn't exist. Maybe you ment one of these?`));
                 for (const [, policy] of policies) {
-                    if (policy.policyName.toLocaleLowerCase().includes(query.toLocaleLowerCase()))
+                    if (policy.policyName.toLocaleLowerCase().includes(query.toLocaleLowerCase())) {
                         console.log(`yproject_policy -add ${policy.policyName}`);
+                        console.log(`yproject_policy -create ${policy.policyName}`);
+                    }
                 }
                 return;
             }
@@ -57,6 +69,7 @@ export async function run() {
             const projects = loadProjects(localModulesPath, policies);
             for (const projectData of projects.values()) {
                 await checkProject(policies, projectData);
+                projectsProcessed++;
             }
         } else if (["-l", "--list", "-ls", "--ls"].includes(process.argv[2])) {
             const projects = loadProjects(localModulesPath, policies);
@@ -116,13 +129,14 @@ ${pullAllAndBuildCmd}
         } else if (isProject(currentPath)) {
             console.log(`CODE00000184 yproject_policy v${version} started. Checking only '${currentPath}' project`);
             await checkProject(policies, readProject(currentPath, policies));
+            projectsProcessed++;
         } else {
             console.log(
                 `CODE00000185 yproject_policy v${version} started but doesn't know what to check. Add this folder to a policy? Or start with '-a' to check all projects`,
             );
         }
 
-        console.log(chalk.green("CODE00000095 yproject_policy exits..."));
+        console.log(chalk.green(`CODE00000095 ${projectsProcessed ? `Done ${projectsProcessed} projects. ` : ""}yproject_policy exits...`));
     } catch (error) {
         console.error("CODE00000096", error.message);
         process.exit(1);

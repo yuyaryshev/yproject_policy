@@ -35,12 +35,12 @@ export async function loadPolicies(): Promise<Map<string, PolicyData>> {
         console.warn(`CODE00000194 Failed to read globalPackagesPath\n${e.message}`, e);
     }
 
-    // try {
-    //     const projectsPath = resolvePath(await expectNpmConfigKeyString(NPM_CONF_LOCAL_PACKAGES_FOLDER));
-    //     readDirToPolicies(projectsPath);
-    // } catch (e) {
-    //     console.warn(`CODE00000195 Failed to read projectsPath\n${e.message}`, e);
-    // }
+    try {
+        const projectsPath = resolvePath(await expectNpmConfigKeyString(NPM_CONF_LOCAL_PACKAGES_FOLDER));
+        readDirToPolicies(projectsPath);
+    } catch (e) {
+        console.warn(`CODE00000195 Failed to read projectsPath\n${e.message}`, e);
+    }
     return policies;
 }
 
