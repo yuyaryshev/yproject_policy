@@ -32,7 +32,12 @@ export async function loadPolicies(): Promise<Map<string, PolicyData>> {
         const globalPackagesPath = resolvePath(await expectNpmConfigKeyString(NPM_CONF_PREFIX), "node_modules");
         readDirToPolicies(globalPackagesPath);
     } catch (e) {
-        console.warn(`CODE00000194 Failed to read globalPackagesPath\n${e.message}`, e);
+        try {
+            const globalPackagesPath = resolvePath(await expectNpmConfigKeyString(NPM_CONF_PREFIX), "lib", "node_modules");
+            readDirToPolicies(globalPackagesPath);
+        } catch (e2) {
+            console.warn(`CODE00000194 Failed to read globalPackagesPath\n${e.message}`, e, e2);
+        }
     }
 
     try {
