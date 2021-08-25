@@ -3,6 +3,7 @@ import { FilterCollection } from "./other.js";
 
 export type PolicyOptions = {
     exclude?: FilterCollection;
+    addSubdirs?: string[][];
     [x: string]: any;
 };
 
@@ -21,4 +22,5 @@ export interface PolicyData {
     files: FileMap;
     genFiles: GenFilesMap;
     create: PolicyCreateFunc | undefined;
+    policyDefinition: PolicyDefinition;
 }

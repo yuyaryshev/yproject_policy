@@ -1,187 +1,192 @@
 [
- {
-  "cpl": 99,
-  "filePath": "src\\helpers\\checkProject.ts",
-  "pos": 3446
- },
- {
-  "cpl": 97,
-  "filePath": "src\\helpers\\checkProject.ts",
-  "pos": 4719
- },
- {
-  "cpl": 98,
-  "filePath": "src\\helpers\\checkProject.ts",
-  "pos": 6722
- },
- {
-  "cpl": 189,
-  "filePath": "src\\helpers\\checkProject.ts",
-  "pos": 6912
- },
- {
-  "cpl": 201,
-  "filePath": "src\\helpers\\checkProject.ts",
-  "pos": 7133
- },
- {
-  "cpl": 286,
-  "filePath": "src\\helpers\\checkProject.ts",
-  "pos": 8536
- },
- {
-  "cpl": 198,
-  "filePath": "src\\helpers\\checkProject.ts",
-  "pos": 8702
- },
- {
-  "cpl": 100,
-  "filePath": "src\\helpers\\getNpmConfig.ts",
-  "pos": 1166
- },
- {
-  "cpl": 192,
-  "filePath": "src\\helpers\\getNpmConfig.ts",
-  "pos": 1254
- },
- {
-  "cpl": 193,
-  "filePath": "src\\helpers\\getNpmConfig.ts",
-  "pos": 1378
- },
- {
-  "cpl": 188,
-  "filePath": "src\\helpers\\readPolicy.ts",
-  "pos": 1604
- },
- {
-  "cpl": 194,
-  "filePath": "src\\helpers\\scanDir.ts",
-  "pos": 2027
- },
- {
-  "cpl": 195,
-  "filePath": "src\\helpers\\scanDir.ts",
-  "pos": 2659
- },
- {
-  "cpl": 283,
-  "filePath": "src\\helpers\\terminal.ts",
-  "pos": 682
- },
- {
-  "cpl": 285,
-  "filePath": "src\\helpers\\terminal.ts",
-  "pos": 808
- },
- {
-  "cpl": 186,
-  "filePath": "src\\index.ts",
-  "pos": 3096
- },
- {
-  "cpl": 187,
-  "filePath": "src\\index.ts",
-  "pos": 3681
- },
- {
-  "cpl": 190,
-  "filePath": "src\\index.ts",
-  "pos": 4366
- },
- {
-  "cpl": 191,
-  "filePath": "src\\index.ts",
-  "pos": 6591
- },
- {
-  "cpl": 184,
-  "filePath": "src\\index.ts",
-  "pos": 6849
- },
- {
-  "cpl": 185,
-  "filePath": "src\\index.ts",
-  "pos": 7057
- },
- {
-  "cpl": 95,
-  "filePath": "src\\index.ts",
-  "pos": 7206
- },
- {
-  "cpl": 96,
-  "filePath": "src\\index.ts",
-  "pos": 7266
- },
- {
-  "cpl": 101,
-  "filePath": "src\\server\\controller\\checkProject.ts",
-  "pos": 1059
- },
- {
-  "cpl": 199,
-  "filePath": "src\\server\\controller\\checkProject.ts",
-  "pos": 1132
- },
- {
-  "cpl": 200,
-  "filePath": "src\\server\\controller\\checkProject.ts",
-  "pos": 3107
- },
- {
-  "cpl": 202,
-  "filePath": "src\\server\\controller\\checkProject.ts",
-  "pos": 3359
- },
- {
-  "cpl": 94,
-  "filePath": "src\\server\\Env.ts",
-  "pos": 1412
- },
- {
-  "cpl": 197,
-  "filePath": "src\\server\\Env.ts",
-  "pos": 1752
- },
- {
-  "cpl": 288,
-  "filePath": "src\\server\\Env.ts",
-  "pos": 2098
- },
- {
-  "cpl": 183,
-  "filePath": "src\\server\\Env.ts",
-  "pos": 2706
- },
- {
-  "cpl": 291,
-  "filePath": "src\\server\\Env.ts",
-  "pos": 2965
- },
- {
-  "cpl": 281,
-  "filePath": "src\\server\\Env.ts",
-  "pos": 3449
- },
- {
-  "cpl": 287,
-  "filePath": "src\\server\\Env.ts",
-  "pos": 3565
- },
- {
-  "cpl": 289,
-  "filePath": "src\\server\\Env.ts",
-  "pos": 3711
- },
- {
-  "cpl": 290,
-  "filePath": "src\\server\\Env.ts",
-  "pos": 3901
- },
- {
-  "cpl": 282,
-  "filePath": "src\\server\\Env.ts",
-  "pos": 4095
- }
+    {
+        "cpl": 99,
+        "filePath": "src\\helpers\\checkProject.ts",
+        "pos": 3446
+    },
+    {
+        "cpl": 97,
+        "filePath": "src\\helpers\\checkProject.ts",
+        "pos": 4719
+    },
+    {
+        "cpl": 98,
+        "filePath": "src\\helpers\\checkProject.ts",
+        "pos": 6760
+    },
+    {
+        "cpl": 189,
+        "filePath": "src\\helpers\\checkProject.ts",
+        "pos": 6950
+    },
+    {
+        "cpl": 201,
+        "filePath": "src\\helpers\\checkProject.ts",
+        "pos": 7171
+    },
+    {
+        "cpl": 286,
+        "filePath": "src\\helpers\\checkProject.ts",
+        "pos": 8574
+    },
+    {
+        "cpl": 198,
+        "filePath": "src\\helpers\\checkProject.ts",
+        "pos": 8740
+    },
+    {
+        "cpl": 284,
+        "filePath": "src\\helpers\\filterProjectContent.ts",
+        "pos": 1831
+    },
+    {
+        "cpl": 100,
+        "filePath": "src\\helpers\\getNpmConfig.ts",
+        "pos": 1166
+    },
+    {
+        "cpl": 192,
+        "filePath": "src\\helpers\\getNpmConfig.ts",
+        "pos": 1254
+    },
+    {
+        "cpl": 193,
+        "filePath": "src\\helpers\\getNpmConfig.ts",
+        "pos": 1378
+    },
+    {
+        "cpl": 188,
+        "filePath": "src\\helpers\\readPolicy.ts",
+        "pos": 1666
+    },
+    {
+        "cpl": 194,
+        "filePath": "src\\helpers\\scanDir.ts",
+        "pos": 2027
+    },
+    {
+        "cpl": 195,
+        "filePath": "src\\helpers\\scanDir.ts",
+        "pos": 2659
+    },
+    {
+        "cpl": 283,
+        "filePath": "src\\helpers\\terminal.ts",
+        "pos": 682
+    },
+    {
+        "cpl": 285,
+        "filePath": "src\\helpers\\terminal.ts",
+        "pos": 808
+    },
+    {
+        "cpl": 186,
+        "filePath": "src\\index.ts",
+        "pos": 3096
+    },
+    {
+        "cpl": 187,
+        "filePath": "src\\index.ts",
+        "pos": 3681
+    },
+    {
+        "cpl": 190,
+        "filePath": "src\\index.ts",
+        "pos": 4366
+    },
+    {
+        "cpl": 191,
+        "filePath": "src\\index.ts",
+        "pos": 6591
+    },
+    {
+        "cpl": 184,
+        "filePath": "src\\index.ts",
+        "pos": 6849
+    },
+    {
+        "cpl": 185,
+        "filePath": "src\\index.ts",
+        "pos": 7057
+    },
+    {
+        "cpl": 95,
+        "filePath": "src\\index.ts",
+        "pos": 7206
+    },
+    {
+        "cpl": 96,
+        "filePath": "src\\index.ts",
+        "pos": 7266
+    },
+    {
+        "cpl": 101,
+        "filePath": "src\\server\\controller\\checkProject.ts",
+        "pos": 1059
+    },
+    {
+        "cpl": 199,
+        "filePath": "src\\server\\controller\\checkProject.ts",
+        "pos": 1132
+    },
+    {
+        "cpl": 200,
+        "filePath": "src\\server\\controller\\checkProject.ts",
+        "pos": 3107
+    },
+    {
+        "cpl": 202,
+        "filePath": "src\\server\\controller\\checkProject.ts",
+        "pos": 3359
+    },
+    {
+        "cpl": 94,
+        "filePath": "src\\server\\Env.ts",
+        "pos": 1412
+    },
+    {
+        "cpl": 197,
+        "filePath": "src\\server\\Env.ts",
+        "pos": 1752
+    },
+    {
+        "cpl": 288,
+        "filePath": "src\\server\\Env.ts",
+        "pos": 2098
+    },
+    {
+        "cpl": 183,
+        "filePath": "src\\server\\Env.ts",
+        "pos": 2706
+    },
+    {
+        "cpl": 291,
+        "filePath": "src\\server\\Env.ts",
+        "pos": 2965
+    },
+    {
+        "cpl": 281,
+        "filePath": "src\\server\\Env.ts",
+        "pos": 3449
+    },
+    {
+        "cpl": 287,
+        "filePath": "src\\server\\Env.ts",
+        "pos": 3565
+    },
+    {
+        "cpl": 289,
+        "filePath": "src\\server\\Env.ts",
+        "pos": 3711
+    },
+    {
+        "cpl": 290,
+        "filePath": "src\\server\\Env.ts",
+        "pos": 3901
+    },
+    {
+        "cpl": 282,
+        "filePath": "src\\server\\Env.ts",
+        "pos": 4095
+    }
 ]

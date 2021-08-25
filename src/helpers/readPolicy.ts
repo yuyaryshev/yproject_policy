@@ -13,7 +13,7 @@ export function readPolicy(projectDir: string): PolicyData {
     const options = policyDefinition.options || {};
 
     const excludeFilter = options?.exclude ?? [];
-    const files0 = filterFiles(dirFilesOnly(projectDir), genFileFilter, excludeFilter);
+    const files0 = filterFiles(dirFilesOnly(projectDir, policyDefinition), genFileFilter, excludeFilter);
     const genFiles: GenFilesMap = new Map();
     for (const relPath of files0) {
         const fullname = resolve(projectDir, relPath);
@@ -25,10 +25,11 @@ export function readPolicy(projectDir: string): PolicyData {
     }
 
     const files: FileMap = new Map();
-    const files2 = filterFiles(dirFilesOnly(projectDir), "**", [genFileFilter, ...excludeFilter]);
+    const files2 = filterFiles(dirFilesOnly(projectDir, policyDefinition), "**", [genFileFilter, ...excludeFilter]);
     for (const relPath of files2) files.set(relPath, fs.readFileSync(join(projectDir, relPath)).toString());
 
     return {
+        policyDefinition,
         policyName,
         options,
         policyAbsPath: resolve(projectDir),

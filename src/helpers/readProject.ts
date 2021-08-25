@@ -53,7 +53,7 @@ export function readProject(projectDir: string, policies: Map<string, PolicyData
     const excludeFilters: FilterCollection = mergeGlobs(projectPolicyConfig?.options?.exclude, policy?.options?.exclude);
 
     const files: FileMap = new Map();
-    const fileNames = filterFiles(dirFilesOnly(projectDir), "**", excludeFilters);
+    const fileNames = filterFiles(dirFilesOnly(projectDir, policy.policyDefinition), "**", excludeFilters);
     for (const relPath of fileNames) files.set(relPath, readFileSync(join(projectDir, relPath)).toString());
     const packageJson: any = require(join(projectDir, PACKAGE_JSON));
     let prevContentJson: any;

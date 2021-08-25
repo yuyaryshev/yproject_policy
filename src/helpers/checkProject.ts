@@ -160,7 +160,7 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
 
     {
         // Remove temporary files
-        const files = filterFiles(dirFilesOnly(projectDir), POLICY_EXPECTS_FILE_PREFIX + "*.*", []);
+        const files = filterFiles(dirFilesOnly(projectDir, projectData0.policy.policyDefinition), POLICY_EXPECTS_FILE_PREFIX + "*.*", []);
         // console.log(`CODE00000189 Files to be deleted\n`, JSON.stringify(files, undefined, "    "));
         for (const filename of files) unlinkSync(join(projectDir, filename));
     }
