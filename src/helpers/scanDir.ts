@@ -31,11 +31,11 @@ export async function loadPolicies(): Promise<Map<string, PolicyData>> {
     try {
         const globalPackagesPath = resolvePath(await expectNpmConfigKeyString(NPM_CONF_PREFIX), "node_modules");
         readDirToPolicies(globalPackagesPath);
-    } catch (e) {
+    } catch (e: any) {
         try {
             const globalPackagesPath = resolvePath(await expectNpmConfigKeyString(NPM_CONF_PREFIX), "lib", "node_modules");
             readDirToPolicies(globalPackagesPath);
-        } catch (e2) {
+        } catch (e2: any) {
             console.warn(`CODE00000194 Failed to read globalPackagesPath\n${e.message}`, e, e2);
         }
     }
@@ -43,7 +43,7 @@ export async function loadPolicies(): Promise<Map<string, PolicyData>> {
     try {
         const projectsPath = resolvePath(await expectNpmConfigKeyString(NPM_CONF_LOCAL_PACKAGES_FOLDER));
         readDirToPolicies(projectsPath);
-    } catch (e) {
+    } catch (e: any) {
         console.warn(`CODE00000195 Failed to read projectsPath\n${e.message}`, e);
     }
     return policies;

@@ -47,7 +47,7 @@ export const startYPolicyApiServer = async (opts?: YPolicyApiSettings): Promise<
     try {
         settingsFromFile = JSON5Parse(readFileSync(settingsPath, "utf-8"));
         settingsFromFile!.default = false;
-    } catch (e) {
+    } catch (e: any) {
         if (e.code !== "ENOENT") {
             console.error(`CODE00000288 Couldn't read '${settingsPath}' because of error\n`, e);
         }

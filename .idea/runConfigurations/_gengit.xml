@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="-gengit" type="NodeJSConfigurationType" application-parameters="-gengit" path-to-js-file="index.js" working-dir="$PROJECT_DIR$/lib/cjs">
+  <configuration default="false" name="-gengit" type="NodeJSConfigurationType" application-parameters=" -gengit D:\b\Mine\GIT_Work\cmd\gengit" node-parameters="-r source-map-support/register -r ./breaker_lib.cjs" path-to-js-file="bin/index.js" working-dir="$PROJECT_DIR$">
     <method v="2" />
   </configuration>
 </component>

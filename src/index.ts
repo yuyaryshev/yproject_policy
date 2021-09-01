@@ -4,7 +4,7 @@ import { NPM_CONF_LOCAL_PACKAGES_FOLDER } from "./constant/index.js";
 import chalk from "chalk";
 import { outputFileSync } from "fs-extra";
 import { existsSync } from "fs";
-import { join } from "path";
+import { join, basename } from "path";
 import { version } from "./projmeta.js";
 import { expectNpmConfigKeyString } from "./helpers/getNpmConfig.js";
 
@@ -87,12 +87,12 @@ export async function run() {
             const hardResetAndPullLines: string[] = [];
             const cloneAllLines: string[] = [
                 localModulesPath.includes(":") ? localModulesPath.substr(0, 1 + localModulesPath.indexOf(":")) : "",
-                `cd ${localModulesPath}`
+                `cd ${localModulesPath}`,
             ];
-
 
             for (const projectData of projects.values()) {
                 const { projectDir } = projectData;
+                const projectName = basename(projectDir);
                 const pushLine = `cd ${projectDir} & git add --all && git commit -a -m push_all && git push origin`;
                 addAndPushAllLines.push(pushLine);
                 pushAllLines.push(pushLine.split("git add --all && ").join(""));
@@ -102,11 +102,11 @@ export async function run() {
                 pullAllLines.push(pullLine.split("& pnpm i && pnpm run build").join(""));
                 pullAllpnpmiLines.push(pullLine.split(" && pnpm run build").join(""));
 
-                const hardResetAndPullLine = `cmd /c "d: && cd ${projectDir} & git reset --hard origin/master & git reset --hard origin/main & git pull "`
+                const hardResetAndPullLine = `cmd /c "d: && cd ${projectDir} & git reset --hard origin/master & git reset --hard origin/main & git pull "`;
                 hardResetAndPullLines.push(hardResetAndPullLine);
 
-                cloneAllLines.push(`git clone http://git.yyadev.com/yuyaryshev/REPO_NAME.git`);
-                cloneAllLines.push(`git clone https://github.com/yuyaryshev/REPO_NAME.git`);
+                cloneAllLines.push(`git clone http://git.yyadev.com/yuyaryshev/${projectName}.git`);
+                cloneAllLines.push(`git clone https://github.com/yuyaryshev/${projectName}.git`);
             }
 
             const pushAllCmd = pushAllLines.join("\n");
@@ -148,7 +148,7 @@ cloneAllLinesCmd:
 ${cloneAllLinesCmd}
                     
                                 `);
-                            } else if (isProject(currentPath)) {
+        } else if (isProject(currentPath)) {
             console.log(`CODE00000184 yproject_policy v${version} started. Checking only '${currentPath}' project`);
             await checkProject(policies, readProject(currentPath, policies));
             projectsProcessed++;
@@ -159,7 +159,7 @@ ${cloneAllLinesCmd}
         }
 
         console.log(chalk.green(`CODE00000095 ${projectsProcessed ? `Done ${projectsProcessed} projects. ` : ""}yproject_policy exits...`));
-    } catch (error) {
+    } catch (error: any) {
         console.error("CODE00000096", error.message);
         process.exit(1);
     }

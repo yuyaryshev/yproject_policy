@@ -63,7 +63,7 @@ export function checkProjectPublishApi(env: YPolicyApiServerEnv, app: Express) {
                     } as CheckProjectApiResponse),
                 ),
             );
-        } catch (e) {
+        } catch (e: any) {
             error = "CODE00000202 " + e.message + "\nat=" + e.at || "" + "\n\n" + e.stack;
             console.error(error);
         }

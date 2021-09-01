@@ -37,7 +37,7 @@ export function dirFilesOnly(rootPath: string, policyDefinition: PolicyDefinitio
                 const dirents2 = readdirSync(join(rootPath, ...additionalSubdir), { withFileTypes: true });
                 const fileNames2 = dirents2.filter((f) => !f.isDirectory()).map((f) => join(...additionalSubdir, f.name));
                 fileNames.push(...fileNames2);
-            } catch (e) {
+            } catch (e: any) {
                 console.warn(`CODE00000284 ${e.message} ${e.stack}`);
             }
         }
