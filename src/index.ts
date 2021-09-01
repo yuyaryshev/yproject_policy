@@ -79,11 +79,17 @@ export async function run() {
         } else if (["-gengit", "--gengit"].includes(process.argv[2])) {
             console.log(`CODE00000191 yproject_policy v${version} started. Checking all projects`);
             const projects = loadProjects(localModulesPath, policies);
-            const pushAllLines = [];
-            const addAndPushAllLines = [];
-            const pullAllLines = [];
-            const pullAllAndBuildLines = [];
-            const pullAllpnpmiLines = [];
+            const pushAllLines: string[] = [];
+            const addAndPushAllLines: string[] = [];
+            const pullAllLines: string[] = [];
+            const pullAllAndBuildLines: string[] = [];
+            const pullAllpnpmiLines: string[] = [];
+            const hardResetAndPullLines: string[] = [];
+            const cloneAllLines: string[] = [
+                localModulesPath.includes(":") ? localModulesPath.substr(0, 1 + localModulesPath.indexOf(":")) : "",
+                `cd ${localModulesPath}`
+            ];
+
 
             for (const projectData of projects.values()) {
                 const { projectDir } = projectData;
@@ -95,13 +101,21 @@ export async function run() {
                 pullAllAndBuildLines.push(pullLine);
                 pullAllLines.push(pullLine.split("& pnpm i && pnpm run build").join(""));
                 pullAllpnpmiLines.push(pullLine.split(" && pnpm run build").join(""));
+
+                const hardResetAndPullLine = `cmd /c "d: && cd ${projectDir} & git reset --hard origin/master & git reset --hard origin/main & git pull "`
+                hardResetAndPullLines.push(hardResetAndPullLine);
+
+                cloneAllLines.push(`git clone http://git.yyadev.com/yuyaryshev/REPO_NAME.git`);
+                cloneAllLines.push(`git clone https://github.com/yuyaryshev/REPO_NAME.git`);
             }
 
             const pushAllCmd = pushAllLines.join("\n");
             const addAndPushAllCmd = addAndPushAllLines.join("\n");
             const pullAllCmd = pullAllLines.join("\n");
             const pullAllAndBuildCmd = pullAllAndBuildLines.join("\n");
-            const pullAllpnpmiLinesCmd = pullAllpnpmiLines.join("\n");
+            const pullAllpnpmiCmd = pullAllpnpmiLines.join("\n");
+            const hardResetAndPullCmd = hardResetAndPullLines.join("\n");
+            const cloneAllLinesCmd = cloneAllLines.join("\n");
 
             const targetDir = process.argv[3];
             if (targetDir) {
@@ -109,7 +123,9 @@ export async function run() {
                 outputFileSync(join(targetDir, "add_and_push_all.bat"), addAndPushAllCmd);
                 outputFileSync(join(targetDir, "pull_all.bat"), pullAllCmd);
                 outputFileSync(join(targetDir, "pull_all_and_build.bat"), pullAllAndBuildCmd);
-                outputFileSync(join(targetDir, "pull_all_pnpmi.bat"), pullAllpnpmiLinesCmd);
+                outputFileSync(join(targetDir, "pull_all_pnpmi.bat"), pullAllpnpmiCmd);
+                outputFileSync(join(targetDir, "hard_reset_all.bat"), hardResetAndPullCmd);
+                outputFileSync(join(targetDir, "clone_all.bat"), cloneAllLinesCmd);
                 console.log(`Written bat files to ${targetDir}`);
             } else
                 console.log(`
@@ -125,8 +141,14 @@ ${pullAllCmd}
 Pull all anf build:
 ${pullAllAndBuildCmd}
 
-            `);
-        } else if (isProject(currentPath)) {
+hardResetAndPullCmd:
+${hardResetAndPullCmd}
+
+cloneAllLinesCmd:
+${cloneAllLinesCmd}
+                    
+                                `);
+                            } else if (isProject(currentPath)) {
             console.log(`CODE00000184 yproject_policy v${version} started. Checking only '${currentPath}' project`);
             await checkProject(policies, readProject(currentPath, policies));
             projectsProcessed++;
