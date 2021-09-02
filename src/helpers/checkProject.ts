@@ -4,8 +4,9 @@ import { basename, dirname, join } from "path";
 import { dirFilesOnly, filterFiles, openFileDiffFromTextEditor, readProject, showTable, writeFileSyncIfChanged } from "../helpers/index.js";
 import { POLICY_EXPECTS_FILE_PREFIX, PROJECT_POLICY_PREV_CONTENT_FILENAME } from "../constant/index.js";
 import { FileDiffMap, FileMap } from "../types/FileMap.js";
-import { readdirSync, unlinkSync } from "fs";
+import { unlinkSync } from "fs";
 import chalk from "chalk";
+import { isMatch } from "micromatch";
 
 export function compareWithPolicy(projectData: ProjectData) {
     const {
@@ -17,19 +18,32 @@ export function compareWithPolicy(projectData: ProjectData) {
     } = projectData;
 
     const projectExtraFiles: FileMap = new Map();
-    for (const [fileName, projectContent] of projectFiles) if (!policyFiles.has(fileName)) projectExtraFiles.set(fileName, projectContent);
+    for (const [fileName, projectContent] of projectFiles) {
+        if (!policyFiles.has(fileName)) {
+            // console.log("YYA09127312897");
+            // console.log("YYA09127312897");
+            // console.log("YYA09127312897");
+            if (!policy.policyDefinition.options.allowedExtraFiles || !isMatch(fileName, policy.policyDefinition.options.allowedExtraFiles)) {
+                projectExtraFiles.set(fileName, projectContent);
+            }
+        }
+    }
 
     const matchingFiles: FileMap = new Map();
     const differentFiles: FileDiffMap = new Map();
     const policyExtraFiles: FileMap = new Map();
     for (const [fileName, policyContent] of policyFiles) {
         const projectContent = projectFiles.get(fileName) || "";
-        if (!projectFiles.has(fileName)) policyExtraFiles.set(fileName, policyContent);
-        else {
+        if (!projectFiles.has(fileName)) {
+            if (!policy.policyDefinition.options.allowedExtraFiles || !isMatch(fileName, policy.policyDefinition.options.allowedExtraFiles)) {
+                policyExtraFiles.set(fileName, policyContent);
+            }
+        } else {
             if (policyContent.trim() === projectContent.trim()) matchingFiles.set(fileName, policyContent);
             else differentFiles.set(fileName, { projectContent, policyContent });
         }
     }
+
     return { matchingFiles, differentFiles, projectExtraFiles, policyExtraFiles };
 }
 

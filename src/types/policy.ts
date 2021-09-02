@@ -4,6 +4,7 @@ import { FilterCollection } from "./other.js";
 export type PolicyOptions = {
     exclude?: FilterCollection;
     addSubdirs?: string[][];
+    allowedExtraFiles?: string[];
     [x: string]: any;
 };
 

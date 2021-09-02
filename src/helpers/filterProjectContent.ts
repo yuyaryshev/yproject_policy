@@ -19,11 +19,10 @@ export function filterFiles(
     includeFilters: FilterCollection | Filter = "**",
     excludeFilters: FilterCollection = [],
 ): Array<string> {
-    const opts = {
+    return micromatch(fileNames, includeFilters, {
         dot: true,
         ignore: arrayUnion(defaultFilterCollection, excludeFilters),
-    };
-    return micromatch(fileNames, includeFilters, opts);
+    });
 }
 
 export function dirFilesOnly(rootPath: string, policyDefinition: PolicyDefinition) {
