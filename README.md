@@ -37,9 +37,9 @@ erase node_path.txt
    
         pnpm config set local_packages_folder YOUR_PATH_TO_PROJECTS_FOLDER
 
-3. Use `pnpm config` to set `text_editor` to specify the path to your text editor, to display the difference in file contents:
+3. Use `pnpm config` to set `diff_editor` to specify the path to your text editor, to display the difference in file contents:
    
-        pnpm config set text_editor YOUR_PATH_TO_TEXT_EDITOR
+        pnpm config set diff_editor YOUR_PATH_TO_TEXT_EDITOR
 
 # Usage
 
