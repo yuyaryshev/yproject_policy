@@ -1,43 +1,73 @@
 [
     {
+        "cpl": 96,
+        "filePath": "src\\helpers\\checkProject.ts",
+        "pos": 2329
+    },
+    {
+        "cpl": 204,
+        "filePath": "src\\helpers\\checkProject.ts",
+        "pos": 3499
+    },
+    {
+        "cpl": 205,
+        "filePath": "src\\helpers\\checkProject.ts",
+        "pos": 4360
+    },
+    {
         "cpl": 99,
         "filePath": "src\\helpers\\checkProject.ts",
-        "pos": 3988
+        "pos": 5367
+    },
+    {
+        "cpl": 206,
+        "filePath": "src\\helpers\\checkProject.ts",
+        "pos": 6511
     },
     {
         "cpl": 97,
         "filePath": "src\\helpers\\checkProject.ts",
-        "pos": 5261
+        "pos": 7357
+    },
+    {
+        "cpl": 209,
+        "filePath": "src\\helpers\\checkProject.ts",
+        "pos": 7439
+    },
+    {
+        "cpl": 210,
+        "filePath": "src\\helpers\\checkProject.ts",
+        "pos": 7900
     },
     {
         "cpl": 98,
         "filePath": "src\\helpers\\checkProject.ts",
-        "pos": 7302
+        "pos": 9873
     },
     {
         "cpl": 189,
         "filePath": "src\\helpers\\checkProject.ts",
-        "pos": 7492
+        "pos": 10063
     },
     {
         "cpl": 201,
         "filePath": "src\\helpers\\checkProject.ts",
-        "pos": 7713
+        "pos": 10284
     },
     {
         "cpl": 286,
         "filePath": "src\\helpers\\checkProject.ts",
-        "pos": 9116
+        "pos": 11687
     },
     {
         "cpl": 198,
         "filePath": "src\\helpers\\checkProject.ts",
-        "pos": 9282
+        "pos": 11853
     },
     {
         "cpl": 284,
         "filePath": "src\\helpers\\filterProjectContent.ts",
-        "pos": 1822
+        "pos": 1794
     },
     {
         "cpl": 100,
@@ -57,7 +87,7 @@
     {
         "cpl": 188,
         "filePath": "src\\helpers\\readPolicy.ts",
-        "pos": 1666
+        "pos": 1753
     },
     {
         "cpl": 194,
@@ -82,42 +112,47 @@
     {
         "cpl": 186,
         "filePath": "src\\index.ts",
-        "pos": 3106
+        "pos": 3108
     },
     {
         "cpl": 187,
         "filePath": "src\\index.ts",
-        "pos": 3691
+        "pos": 3693
     },
     {
         "cpl": 190,
         "filePath": "src\\index.ts",
-        "pos": 4376
+        "pos": 4378
     },
     {
         "cpl": 191,
         "filePath": "src\\index.ts",
-        "pos": 7835
+        "pos": 7837
     },
     {
         "cpl": 184,
         "filePath": "src\\index.ts",
-        "pos": 8093
+        "pos": 8095
     },
     {
         "cpl": 185,
         "filePath": "src\\index.ts",
-        "pos": 8301
+        "pos": 8303
     },
     {
         "cpl": 95,
         "filePath": "src\\index.ts",
-        "pos": 8455
+        "pos": 8484
     },
     {
-        "cpl": 96,
+        "cpl": 196,
         "filePath": "src\\index.ts",
-        "pos": 8515
+        "pos": 8534
+    },
+    {
+        "cpl": 203,
+        "filePath": "src\\index.ts",
+        "pos": 8600
     },
     {
         "cpl": 101,

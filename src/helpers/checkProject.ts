@@ -1,10 +1,24 @@
 import { PolicyData, ProjectData } from "../types/index.js";
-import { readFileSync } from "fs-extra";
-import { basename, dirname, join } from "path";
-import { dirFilesOnly, filterFiles, openFileDiffFromTextEditor, readProject, showTable, writeFileSyncIfChanged } from "../helpers/index.js";
-import { POLICY_EXPECTS_FILE_PREFIX, PROJECT_POLICY_PREV_CONTENT_FILENAME } from "../constant/index.js";
+import { outputFile, readFileSync, link, linkSync, unlink, unlinkSync, remove, removeSync, mkdirpSync, ensureDirSync } from "fs-extra";
+import { resolve, basename, dirname, join } from "path";
+import { makeParallel } from "ystd";
+
+import {
+    dirFilesOnly,
+    expectNpmConfigKeyString,
+    filterFiles,
+    openFileDiffFromTextEditor,
+    readProject,
+    showTable,
+    writeFileSyncIfChanged,
+} from "../helpers/index.js";
+import {
+    NPM_CONF_COMPARITION_FOLDER,
+    NPM_CONF_LOCAL_PACKAGES_FOLDER,
+    POLICY_EXPECTS_FILE_PREFIX,
+    PROJECT_POLICY_PREV_CONTENT_FILENAME,
+} from "../constant/index.js";
 import { FileDiffMap, FileMap } from "../types/FileMap.js";
-import { unlinkSync } from "fs";
 import chalk from "chalk";
 import { isMatch } from "micromatch";
 
@@ -32,15 +46,26 @@ export function compareWithPolicy(projectData: ProjectData) {
     const matchingFiles: FileMap = new Map();
     const differentFiles: FileDiffMap = new Map();
     const policyExtraFiles: FileMap = new Map();
-    for (const [fileName, policyContent] of policyFiles) {
+    for (const [fileName, policyFile] of policyFiles) {
         const projectContent = projectFiles.get(fileName) || "";
         if (!projectFiles.has(fileName)) {
             if (!policy.policyDefinition.options.allowedExtraFiles || !isMatch(fileName, policy.policyDefinition.options.allowedExtraFiles)) {
-                policyExtraFiles.set(fileName, policyContent);
+                if (!policyFile) {
+                    console.trace("CODE00000096 YYADEBUG_undefined_policyContent");
+                }
+                policyExtraFiles.set(fileName, policyFile.policyContent);
             }
         } else {
-            if (policyContent.trim() === projectContent.trim()) matchingFiles.set(fileName, policyContent);
-            else differentFiles.set(fileName, { projectContent, policyContent });
+            if (!policyFile) {
+                console.trace("CODE00000204 YYADEBUG_undefined_policyContent");
+            }
+            if (policyFile.policyContent.trim() === projectContent.trim()) matchingFiles.set(fileName, policyFile.policyContent);
+            else
+                differentFiles.set(fileName, {
+                    relativePath: fileName,
+                    projectContent,
+                    policyFile,
+                });
         }
     }
 
@@ -61,8 +86,11 @@ export function projectAutofix(projectData: ProjectData) {
     // Overwrite unchagned files
     for (const [fileName, d] of differentFiles)
         if (projectData.prevPolicyFiles.has(fileName)) {
-            writeFileSyncIfChanged(join(projectDir, fileName), d.policyContent);
-            matchingFiles.set(fileName, d.policyContent);
+            if (!d.policyFile) {
+                console.trace("CODE00000205 YYADEBUG_undefined_policyContent");
+            }
+            writeFileSyncIfChanged(join(projectDir, fileName), d.policyFile.policyContent);
+            matchingFiles.set(fileName, d.policyFile.policyContent);
             differentFiles.delete(fileName);
         }
 
@@ -83,8 +111,43 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
     console.log(`CODE00000099 ${projectData.projectDir} - checkProject started`);
 
     const { projectDir } = projectData;
+    const projectName = basename(projectData.projectDir);
     {
         const { differentFiles, matchingFiles, projectExtraFiles, policyExtraFiles } = projectAutofix(projectData);
+
+        const comparition_folder = await expectNpmConfigKeyString(NPM_CONF_COMPARITION_FOLDER);
+        if (comparition_folder.length) {
+            removeSync(join(comparition_folder, "policy", projectName));
+            removeSync(join(comparition_folder, "project", projectName));
+
+            if (differentFiles.size) {
+                mkdirpSync(join(comparition_folder, "policy", projectName));
+                mkdirpSync(join(comparition_folder, "project", projectName));
+            }
+
+            const parallel = makeParallel();
+            for (const [filePath, item] of differentFiles) {
+                // link(existingPath, newPath);
+
+                if (!item.policyFile) {
+                    console.trace("CODE00000206 YYADEBUG_undefined_policyContent");
+                }
+
+                const filePathDir = dirname(filePath);
+                if (filePathDir && filePathDir !== "." && filePathDir.length) {
+                    ensureDirSync(join(comparition_folder, "policy", projectName, filePathDir));
+                    ensureDirSync(join(comparition_folder, "project", projectName, filePathDir));
+                }
+
+                parallel.add([
+                    item.policyFile.generated
+                        ? outputFile(join(comparition_folder, "policy", projectName, filePath), item.policyFile.policyContent)
+                        : link(join(projectData.policy.policyAbsPath, filePath), join(comparition_folder, "policy", projectName, filePath)),
+                    link(join(projectDir, filePath), join(comparition_folder, "project", projectName, filePath)),
+                ]);
+            }
+            await parallel.wait();
+        }
 
         // Ask what to do with different files
         if (differentFiles.size) {
@@ -110,14 +173,15 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
                 [...differentFiles.keys()],
             );
             for (const [relPath, choice] of results) {
+                const rrrr = projectData.policyFiles.get(relPath);
+
+                if (!rrrr) {
+                    console.trace("CODE00000209 YYADEBUG_undefined_policyContent");
+                    throw new Error("CODE00000210 YYADEBUG_undefined_policyContent");
+                }
+
                 // @ts-ignore
-                await executeSelectedAction(
-                    choice,
-                    join(projectDir, relPath),
-                    projectData.policyFiles.get(relPath)!,
-                    projectData.policy.policyAbsPath,
-                    !projectData.policy.files.has(relPath),
-                );
+                await executeSelectedAction(choice, join(projectDir, relPath), rrrr.policyContent, projectData.policy.policyAbsPath, rrrr.generated);
             }
         }
 
@@ -150,13 +214,7 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
             );
             for (const [relPath, choice] of results) {
                 // @ts-ignore
-                await executeSelectedAction(
-                    choice,
-                    join(projectDir, relPath),
-                    projectData.policyFiles.get(relPath)!,
-                    projectData.policy.policyAbsPath,
-                    !projectData.policy.files.has(relPath),
-                );
+                await executeSelectedAction(choice, join(projectDir, relPath), "", projectData.policy.policyAbsPath, false);
             }
         }
     }

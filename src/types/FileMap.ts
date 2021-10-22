@@ -8,9 +8,18 @@ export type PolicyFileGenerator = {
 export type GenFilesMap = Map<string, PolicyFileGenerator>;
 export type FileMap = Map<string, string>;
 
-export interface FileDiff {
-    projectContent: string;
+export interface PolicyFile {
+    policyPath: string;
     policyContent: string;
+    generated: boolean;
+}
+
+export type PolicyFileMap = Map<string, PolicyFile>;
+
+export interface FileDiff {
+    relativePath: string;
+    projectContent: string;
+    policyFile: PolicyFile;
 }
 
 export type FileDiffMap = Map<string, FileDiff>;

@@ -1,5 +1,5 @@
 import { join, resolve, posix } from "path";
-import { PolicyData, PolicyDefinition } from "../types/index.js";
+import { PolicyData, PolicyDefinition, PolicyFileMap } from "../types/index.js";
 import { genFileFilter, POLICY_DEFINITION_FILENAME } from "../constant/index.js";
 import fs from "fs";
 import { dirFilesOnly, filterFiles } from "./filterProjectContent.js";
@@ -24,9 +24,10 @@ export function readPolicy(projectDir: string): PolicyData {
         }
     }
 
-    const files: FileMap = new Map();
+    const files: PolicyFileMap = new Map();
     const files2 = filterFiles(dirFilesOnly(projectDir, policyDefinition), "**", [genFileFilter, ...excludeFilter]);
-    for (const relPath of files2) files.set(relPath, fs.readFileSync(join(projectDir, relPath)).toString());
+    for (const relPath of files2)
+        files.set(relPath, { policyPath: relPath, generated: false, policyContent: fs.readFileSync(join(projectDir, relPath)).toString() });
 
     return {
         policyDefinition,

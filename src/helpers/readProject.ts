@@ -1,6 +1,6 @@
 import { resolve, join, posix } from "path";
 import { readFileSync } from "fs";
-import { PolicyData, PolicyDefinition, PolicyOptions, ProjectData, ProjectPolicyConfig } from "../types/index.js";
+import { PolicyData, PolicyDefinition, PolicyFileMap, PolicyOptions, ProjectData, ProjectPolicyConfig } from "../types/index.js";
 import { dirFilesOnly, exceptPolicy, filterFiles, mergeGlobs } from "../helpers/index.js";
 import { genFileFilter, PACKAGE_JSON, PROJECT_POLICY_CONFIG_FILENAME, PROJECT_POLICY_PREV_CONTENT_FILENAME } from "../constant/index.js";
 import { FileMap } from "../types/FileMap.js";
@@ -18,9 +18,9 @@ function genPolicyFiles({
     packageJson: any;
     policyConf: ProjectPolicyConfig;
     projectFiles: FileMap;
-}): FileMap {
+}): PolicyFileMap {
     // Generating policy files - start
-    const policyGeneratedFiles = new Map();
+    const policyGeneratedFiles: PolicyFileMap = new Map();
 
     for (const [relPath, { generate, filename }] of policy.genFiles.entries()) {
         const filename2 =
@@ -37,11 +37,11 @@ function genPolicyFiles({
             //readFileSync(finalFilename, "utf-8") || "",
         );
         policy.files.delete(filename2);
-        policyGeneratedFiles.set(filename2, content);
+        policyGeneratedFiles.set(filename2, { policyPath: relPath, generated: true, policyContent: content });
     }
 
-    const policyFiles0: FileMap = new Map([...policy.files, ...policyGeneratedFiles]);
-    const policyFiles: FileMap = new Map();
+    const policyFiles0: PolicyFileMap = new Map([...policy.files, ...policyGeneratedFiles]);
+    const policyFiles: PolicyFileMap = new Map();
     const policyFileNames = filterFiles([...policyFiles0.keys()], "**", mergeGlobs(policyConf.options?.exclude));
     for (const filename of policyFileNames) policyFiles.set(filename, policyFiles0.get(filename)!);
     return policyFiles;
@@ -63,7 +63,7 @@ export function readProject(projectDir: string, policies: Map<string, PolicyData
         prevContentJson = {};
     }
     const prevPolicyFiles: Set<string> = new Set();
-    const policyFiles: FileMap = genPolicyFiles({ projectDir, policy, packageJson, policyConf: projectPolicyConfig, projectFiles: files });
+    const policyFiles: PolicyFileMap = genPolicyFiles({ projectDir, policy, packageJson, policyConf: projectPolicyConfig, projectFiles: files });
 
     for (const [fileName, fileContent] of files) if (prevContentJson[fileName] === fileContent) prevPolicyFiles.add(fileName);
     return {

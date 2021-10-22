@@ -1,7 +1,6 @@
 // import globby from "globby";
 import { defaultFilterCollection } from "../constant/index.js";
 import micromatch from "micromatch";
-import arrayUnion from "array-union";
 import { FileMap } from "../types/FileMap.js";
 import { join, posix } from "path";
 import { ensureDirSync, readdirSync } from "fs-extra";
@@ -21,7 +20,7 @@ export function filterFiles(
 ): Array<string> {
     return micromatch(fileNames, includeFilters, {
         dot: true,
-        ignore: arrayUnion(defaultFilterCollection, excludeFilters),
+        ignore: [...new Set([...defaultFilterCollection, ...excludeFilters])],
     });
 }
 

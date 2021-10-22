@@ -1,4 +1,4 @@
-import { FileMap, GenFilesMap } from "./FileMap.js";
+import { FileMap, GenFilesMap, PolicyFileMap } from "./FileMap.js";
 import { FilterCollection } from "./other.js";
 
 export type PolicyOptions = {
@@ -20,7 +20,7 @@ export interface PolicyData {
     policyName: string;
     options: PolicyOptions;
     policyAbsPath: string;
-    files: FileMap;
+    files: PolicyFileMap;
     genFiles: GenFilesMap;
     create: PolicyCreateFunc | undefined;
     policyDefinition: PolicyDefinition;

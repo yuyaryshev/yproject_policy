@@ -1,4 +1,4 @@
-import { FileMap } from "./FileMap.js";
+import { FileMap, PolicyFileMap } from "./FileMap.js";
 import { FilterCollection } from "./other.js";
 import { PolicyData } from "./policy.js";
 
@@ -15,7 +15,7 @@ export type ProjectPolicyConfig = {
 export interface ProjectData {
     policyConf: ProjectPolicyConfig;
     projectFiles: FileMap;
-    policyFiles: FileMap;
+    policyFiles: PolicyFileMap;
     packageJson: object;
     projectDir: string;
     prevPolicyFiles: Set<string>;
