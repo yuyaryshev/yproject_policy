@@ -1,2 +1,2 @@
-export const version = '1.3.4';
-export const packageName = 'yproject_policy';
+export const version = "1.4.0";
+export const packageName = "yproject_policy";

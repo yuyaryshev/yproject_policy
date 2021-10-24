@@ -114,7 +114,7 @@ export async function checkProject(policies: Map<string, PolicyData>, projectDat
     const projectName = basename(projectData.projectDir);
     {
         const { differentFiles, matchingFiles, projectExtraFiles, policyExtraFiles } = projectAutofix(projectData);
-        if (projectData0.policy.options.allowDifferent)
+        if (projectData0.policy?.options?.allowDifferent)
             for (const k of projectData0.policy.options.allowDifferent) {
                 differentFiles.delete(k);
             }
