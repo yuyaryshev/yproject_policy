@@ -1,10 +1,4 @@
 
-src/tests/generated
-src/tests/generated
-cpl.json
-src/generator/tests/generated
-
-
 # Logs
 logs
 *.log
