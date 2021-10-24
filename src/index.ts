@@ -80,6 +80,7 @@ export async function run() {
         console.log(`CODE00000191 yproject_policy v${version} started. Checking all projects`);
         const projects = loadProjects(localModulesPath, policies);
         const pushAllLines: string[] = [];
+        const pnpmiAllLines: string[] = [];
         const addAndPushAllLines: string[] = [];
         const pullAllLines: string[] = [];
         const pullAllAndBuildLines: string[] = [];
@@ -97,6 +98,8 @@ export async function run() {
             addAndPushAllLines.push(pushLine);
             pushAllLines.push(pushLine.split("git add --all && ").join(""));
 
+            pnpmiAllLines.push(`cmd /c "cd ${projectDir} && pnpm i"`);
+
             const pullLine = `cmd /c "d: && cd ${projectDir} & git pull & pnpm i && pnpm run build"`;
             pullAllAndBuildLines.push(pullLine);
             pullAllLines.push(pullLine.split("& pnpm i && pnpm run build").join(""));
@@ -110,6 +113,7 @@ export async function run() {
         }
 
         const pushAllCmd = pushAllLines.join("\n");
+        const pnpmiAllCmd = pnpmiAllLines.join("\n");
         const addAndPushAllCmd = addAndPushAllLines.join("\n");
         const pullAllCmd = pullAllLines.join("\n");
         const pullAllAndBuildCmd = pullAllAndBuildLines.join("\n");
@@ -119,6 +123,7 @@ export async function run() {
 
         const targetDir = process.argv[3];
         if (targetDir) {
+            outputFileSync(join(targetDir, "pnpm_i_all.bat"), pnpmiAllCmd);
             outputFileSync(join(targetDir, "push_all.bat"), pushAllCmd);
             outputFileSync(join(targetDir, "add_and_push_all.bat"), addAndPushAllCmd);
             outputFileSync(join(targetDir, "pull_all.bat"), pullAllCmd);
